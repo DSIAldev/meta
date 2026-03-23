@@ -242,7 +242,7 @@ function selectRoom(idx) {
       <iframe src="${salle.url}" title="Calendrier ${salle.nom}" loading="lazy"></iframe>
       <div class="iframe-actions">
         <span>📧 ${salle.email}</span>
-        <a class="btn-reserve" href="mailto:${salle.email}?subject=Réservation — Salle ${salle.nom}">Réserver cette salle</a>
+        <a class="btn-reserve" href="https://outlook.office.com/calendar/action/compose?to=${salle.email}&subject=Réservation — ${salle.nom}&startdt=&enddt=" target="_blank">📅 Réserver cette salle</a>
       </div>
     </div>
   `;
