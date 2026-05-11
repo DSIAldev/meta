@@ -1,0 +1,81 @@
+{
+  "updated": "11/05/2026 18:15",
+  "salles": [
+    {
+      "nom": "Auditorium",
+      "etage": "1er étage",
+      "créneaux": [
+        { "subject": "Assemblée générale RPE49", "organizer": "contact@rpe49.fr", "start": "2026-05-14T09:00:00+02:00", "end": "2026-05-14T12:00:00+02:00" },
+        { "subject": "Comité de direction ALM", "organizer": "BMERTENS@angers-developpement.com", "start": "2026-05-14T14:00:00+02:00", "end": "2026-05-14T17:00:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Le Club",
+      "etage": "1er étage",
+      "créneaux": []
+    },
+    {
+      "nom": "Aubance",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Réunion partenaires CCI", "organizer": "pascal.ranchoux@maineetloire.cci.fr", "start": "2026-05-14T16:30:00+02:00", "end": "2026-05-14T17:30:00+02:00" },
+        { "subject": "Atelier innovation numérique", "organizer": "contact@angerstechnopole.com", "start": "2026-05-15T09:00:00+02:00", "end": "2026-05-15T11:00:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Authion",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Réunion DVPE prospective", "organizer": "AASCENSI@angers-developpement.com", "start": "2026-05-14T09:00:00+02:00", "end": "2026-05-14T11:00:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Layon",
+      "etage": "7e étage",
+      "créneaux": []
+    },
+    {
+      "nom": "Loire",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Copil French Tech Angers", "organizer": "contact@angerstechnopole.com", "start": "2026-05-15T10:00:00+02:00", "end": "2026-05-15T12:00:00+02:00" },
+        { "subject": "Comité IA & Souveraineté", "organizer": "GDELNATTE@angers-developpement.com", "start": "2026-05-15T14:00:00+02:00", "end": "2026-05-15T16:00:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Louet",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Réunion prospective DVPE", "organizer": "AASCENSI@angers-developpement.com", "start": "2026-05-14T14:00:00+02:00", "end": "2026-05-14T15:30:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Maine",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Bertrand MERTENS", "organizer": "BMERTENS@angers-developpement.com", "start": "2026-05-14T09:00:00+02:00", "end": "2026-05-14T12:00:00+02:00" },
+        { "subject": "Catherine FAUVEL", "organizer": "CFAUVEL@angers-developpement.com", "start": "2026-05-14T16:30:00+02:00", "end": "2026-05-14T17:30:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Mayenne",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Forum emploi numérique", "organizer": "gaelle.gate@maineetloire.cci.fr", "start": "2026-05-14T10:00:00+02:00", "end": "2026-05-14T12:00:00+02:00" },
+        { "subject": "Atelier startups Maine-et-Loire", "organizer": "contact@angerstechnopole.com", "start": "2026-05-14T15:00:00+02:00", "end": "2026-05-14T18:00:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Oudon",
+      "etage": "7e étage",
+      "créneaux": [
+        { "subject": "Guillaume DELNATTE", "organizer": "GDELNATTE@angers-developpement.com", "start": "2026-05-15T09:00:00+02:00", "end": "2026-05-15T10:00:00+02:00" }
+      ]
+    },
+    {
+      "nom": "Sarthe",
+      "etage": "7e étage",
+      "créneaux": []
+    }
+  ]
+}
