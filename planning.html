@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
+<title>Métamorphose — Planning des salles</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#f4f2ee;--surface:#ffffff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-secondary:#6b6860;--text-muted:#a09d98;
+    --accent:#2d3546;--busy:#c84b2f;--free:#2e7d5e;--free-light:#eaf4ef;
+    --aldev:#ec2e4a;--aldev-light:#fdeef1;
+    --technopole:#0f1f3d;--technopole-light:#e8eaf0;
+    --cci:#373cf5;--cci-light:#eeeffe;
+    --other:#4a6741;--other-light:#edf3ec;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;line-height:1.4;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .subtitle{font-size:12px;color:var(--text-muted);font-weight:400;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .legend{display:flex;gap:10px;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);}
+  .legend-dot{width:8px;height:8px;border-radius:50%;}
+  .main{padding:16px 24px 24px;}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  table{width:100%;border-collapse:collapse;}
+  thead tr{background:#f9f8f6;border-bottom:2px solid var(--border);}
+  thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;}
+  thead th.ch{background:#f0f4f8;border-left:1px solid var(--border);color:var(--accent);}
+  thead th.lh{background:#f0f8f4;border-left:2px solid var(--border);color:var(--free);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:#fafaf8;}
+  tbody tr.fs td{background:#f9f8f6;padding:4px 12px;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+  td{padding:10px 12px;vertical-align:top;}
+  td.sc{font-weight:600;font-size:13px;color:var(--text-primary);white-space:nowrap;width:100px;}
+  td.cc{border-left:1px solid var(--border);width:200px;}
+  td.lc{border-left:2px solid var(--border);width:130px;}
+  .slot{display:flex;flex-direction:column;gap:3px;}
+  .slot-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);display:flex;align-items:center;gap:5px;}
+  .slot-time::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--busy);flex-shrink:0;}
+  .slot-title{font-size:12px;font-weight:500;color:var(--text-primary);line-height:1.3;}
+  .slot-org{display:inline-block;font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;margin-top:2px;}
+  .org-aldev{background:var(--aldev-light);color:var(--aldev);}
+  .org-technopole{background:var(--technopole-light);color:var(--technopole);}
+  .org-cci{background:var(--cci-light);color:var(--cci);}
+  .org-other{background:var(--other-light);color:var(--other);}
+  .slot-empty{font-size:11px;color:var(--text-muted);font-style:italic;}
+  .free-slot{display:flex;flex-direction:column;gap:2px;}
+  .free-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--free);font-weight:500;}
+  .free-time{font-size:11px;color:var(--text-secondary);}
+  .free-now{font-size:11px;font-weight:600;color:var(--free);background:var(--free-light);padding:2px 7px;border-radius:3px;display:inline-block;}
+  .error-msg{padding:40px;text-align:center;color:var(--text-muted);font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <img src="11-meta.jpg" alt="Métamorphose" style="height:36px;display:block;">
+    <div class="subtitle">Planning des salles — 2 prochains créneaux</div>
+  </div>
+  <div class="header-right">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--technopole)"></div>Technopôle</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
+    </div>
+    <div class="update-time">Mis à jour : <span id="updated">—</span> &nbsp;·&nbsp; par <span style="color:var(--aldev);font-weight:600">Aldev</span></div>
+  </div>
+</header>
+<div class="main">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Salle</th>
+          <th class="ch">Créneau 1</th>
+          <th class="ch">Créneau 2</th>
+          <th class="lh">Prochain libre</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="4" class="error-msg">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+const ORGS = {
+  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev' },
+  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole' },
+  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci' }
+};
+
+function getOrg(email) {
+  if (!email) return { label: '—', css: 'org-other' };
+  const domain = (email.split('@')[1] || '').toLowerCase();
+  return ORGS[domain] || { label: domain, css: 'org-other' };
+}
+
+function fmtSlot(iso) {
+  const d = new Date(iso);
+  return {
+    day: d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' }),
+    h:   d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })
+  };
+}
+
+function slotHTML(slot) {
+  if (!slot) return '<div class="slot-empty">Libre</div>';
+  const s = fmtSlot(slot.start);
+  const e = fmtSlot(slot.end);
+  const org = getOrg(slot.organizer);
+  return `<div class="slot">
+    <div class="slot-time"><span>${s.day}</span><span>${s.h}–${e.h}</span></div>
+    <div class="slot-title">${slot.subject || '—'}</div>
+    <span class="slot-org ${org.css}">${org.label}</span>
+  </div>`;
+}
+
+function freeHTML(futurs) {
+  if (!futurs || futurs.length === 0) return '<div class="free-now">Disponible</div>';
+  const sorted = [...futurs].sort((a,b) => new Date(b.end)-new Date(a.end));
+  const lastEnd = new Date(sorted[0].end);
+  const day = lastEnd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+  const h   = lastEnd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  return `<div class="free-slot"><div class="free-label">${day}</div><div class="free-time">dès ${h}</div></div>`;
+}
+
+function buildTable(data) {
+  document.getElementById('updated').textContent = data.updated || '—';
+  const tbody = document.getElementById('tbody');
+  let html = '';
+  let lastEtage = null;
+  for (const salle of data.salles) {
+    if (salle.etage !== lastEtage) {
+      html += `<tr class="fs"><td colspan="4">${salle.etage}</td></tr>`;
+      lastEtage = salle.etage;
+    }
+    const now = new Date();
+    const futurs = (salle.créneaux || [])
+      .filter(c => new Date(c.end) > now)
+      .sort((a,b) => new Date(a.start)-new Date(b.start));
+    html += `<tr>
+      <td class="sc">${salle.nom}</td>
+      <td class="cc">${slotHTML(futurs[0])}</td>
+      <td class="cc">${slotHTML(futurs[1])}</td>
+      <td class="lc">${freeHTML(futurs)}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+fetch('data.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.json(); })
+  .then(buildTable)
+  .catch(err => {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="4" class="error-msg">${err.message}</td></tr>`;
+  });
+</script>
+</body>
+</html>
