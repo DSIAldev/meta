@@ -158,13 +158,8 @@ function buildTable(data) {
   tbody.innerHTML = html;
 }
 
-fetch('https://raw.githubusercontent.com/DSIAldev/meta/main/data.json?t=' + Date.now())
-.then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.text(); })
-.then(t => JSON.parse(t.replace(/<!--[\s\S]*?-->/g, '')))
-.then(data => {
-    data.salles.forEach(s => s.créneaux.forEach(c => delete c.body));
-    return data;
-  })
+fetch('data.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.json(); })
   .then(buildTable)
   .catch(err => {
     document.getElementById('tbody').innerHTML =
