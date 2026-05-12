@@ -118,8 +118,9 @@ function slotHTML(slot) {
   const s = fmtSlot(slot.start);
   const e = fmtSlot(slot.end);
   const org = getOrg(slot.organizer);
+  const heures = slot.isallday ? 'Journée entière' : `${s.h}–${e.h}`;
   return `<div class="slot">
-    <div class="slot-time"><span>${s.day}</span><span>${s.h}–${e.h}</span></div>
+    <div class="slot-time"><span>${s.day}</span><span>${heures}</span></div>
     <div class="slot-title">${slot.subject || '—'}</div>
     <span class="slot-org ${org.css}">${org.label}</span>
   </div>`;
