@@ -160,7 +160,7 @@ function buildTable(data) {
 
 fetch('data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.text(); })
-  .then(t => JSON.parse(t.replace(/"body":"(?:[^"\\]|\\.)*",?/g, '')))
+  .then(t => JSON.parse(t.replace(/"body":"(\\.|[^"\\])*",?/gs, '')))
   .then(buildTable)
   .catch(err => {
     document.getElementById('tbody').innerHTML =
