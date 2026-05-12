@@ -94,9 +94,9 @@
 </div>
 <script>
 const ORGS = {
-  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev' },
-  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole' },
-  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci' }
+  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev', tel: '02 52 57 01 00' },
+  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole', tel: '02 41 72 04 04' },
+  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci', tel: '02 41 20 49 00' }
 };
 
 function getOrg(email) {
@@ -122,7 +122,7 @@ function slotHTML(slot) {
   return `<div class="slot">
     <div class="slot-time"><span>${s.day}</span><span>${heures}</span></div>
     <div class="slot-title">${slot.subject || '—'}</div>
-    <span class="slot-org ${org.css}">${org.label}</span>
+    <span class="slot-org ${org.css}" title="${org.tel || ''}">${org.label}</span>
   </div>`;
 }
 
