@@ -153,7 +153,7 @@ function buildTable(data) {
       <td class="sc">${salle.nom}</td>
       <td class="cc">${slotHTML(futurs[0])}</td>
       <td class="cc">${slotHTML(futurs[1])}</td>
-      <td class="lc">${futurs.length >= 2 ? freeHTML(futurs) : futurs.length === 0 ? '<div class="free-now">Disponible</div>' : ''}</td>
+      <td class="lc">${futurs.length >= 2 ? freeHTML(futurs) : '<div class="free-now">Disponible</div>'}</td>
     </tr>`;
   }
   tbody.innerHTML = html;
