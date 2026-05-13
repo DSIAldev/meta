@@ -249,34 +249,14 @@ function buildTable(data) {
   document.getElementById('tbody').innerHTML = html;
 }
 
-// Données de test
-const testData = {
-  updated: new Date().toLocaleDateString('fr-FR') + ' ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),
-  salles: [
-    { nom:'Auditorium', etage:'1er étage', créneaux:[
-      { subject:'Séminaire RH', organizer:'CGAULT@angers-developpement.com', start: todayAt(9), end: todayAt(12), isallday:false },
-      { subject:'Réunion CA', organizer:'pascal.ranchoux@maineetloire.cci.fr', start: todayAt(14), end: todayAt(17), isallday:false },
-    ]},
-    { nom:'Maine', etage:'7e étage', créneaux:[
-      { subject:'Comité projet', organizer:'BMERTENS@angers-developpement.com', start: todayAt(10), end: todayAt(12), isallday:false },
-    ]},
-    { nom:'Loire', etage:'7e étage', créneaux:[
-      { subject:'French Tech', organizer:'contact@angerstechnopole.com', start: todayAt(9), end: todayAt(11), isallday:false },
-    ]},
-    { nom:'Le Club', etage:'1er étage', créneaux:[] },
-    { nom:'Sarthe', etage:'7e étage', créneaux:[] },
-    { nom:'Mayenne', etage:'7e étage', créneaux:[] },
-    { nom:'Authion', etage:'7e étage', créneaux:[] },
-    { nom:'Oudon', etage:'7e étage', créneaux:[] },
-  ]
-};
-
-function todayAt(h) {
-  const d = new Date(); d.setHours(h,0,0,0);
-  return d.toISOString().slice(0,11) + String(h).padStart(2,'0') + ':00:00+02:00';
-}
-
-buildTable(testData);
+// Données de PRODUCTION
+fetch('data.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.json(); })
+  .then(buildTable)
+  .catch(err => {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="9" style="padding:40px;text-align:center;color:#a09d98;">${err.message}</td></tr>`;
+  });
 </script>
 </body>
 </html>
