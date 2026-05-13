@@ -24,13 +24,19 @@
   .legend-dot{width:10px;height:10px;border-radius:2px;}
   .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
   .main{padding:16px 20px 40px;}
-  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;box-shadow:var(--shadow);}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
   table{width:100%;border-collapse:collapse;table-layout:fixed;}
   thead{position:sticky;top:57px;z-index:90;background:var(--surface);}
   thead tr{border-bottom:2px solid var(--border);}
   thead th{padding:8px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-left:1px solid var(--border);background:#f9f8f6;}
   thead th:first-child{border-left:none;text-align:left;padding-left:10px;}
   thead th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
+  /* Clone fantôme du thead pour le sticky */
+  #thead-clone{position:fixed;top:57px;left:0;right:0;z-index:95;display:none;background:#f9f8f6;border-bottom:2px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,.06);}
+  #thead-clone table{width:100%;border-collapse:collapse;table-layout:fixed;}
+  #thead-clone th{padding:8px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-left:1px solid var(--border);background:#f9f8f6;}
+  #thead-clone th:first-child{border-left:none;text-align:left;padding-left:10px;}
+  #thead-clone th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
   tbody tr{border-bottom:1px solid var(--border);}
   tbody tr:last-child{border-bottom:none;}
   tbody tr.day-first td{border-top:2px solid var(--border);}
@@ -76,7 +82,7 @@
 
 <div class="main">
   <div class="table-wrap">
-    <table>
+    <table id="main-table">
       <thead>
         <tr>
           <th style="width:90px;">Jour</th>
@@ -258,5 +264,70 @@ fetch('data.json?t=' + Date.now())
       `<tr><td colspan="9" style="padding:40px;text-align:center;color:#a09d98;">${err.message}</td></tr>`;
   });
 </script>
+
+<div id="thead-clone" style="position:fixed;top:57px;left:0;right:0;z-index:95;display:none;background:#f9f8f6;border-bottom:2px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,.06);">
+  <div id="clone-inner" style="margin:0 20px;overflow:hidden;">
+    <table id="clone-table" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+      <thead><tr id="clone-row"></tr></thead>
+    </table>
+  </div>
+</div>
+
+<script>
+// Sticky thead clone : synchronise les largeurs de colonnes et s'affiche quand le vrai thead passe hors écran
+(function() {
+  function syncClone() {
+    const mainTable = document.getElementById('main-table');
+    const cloneRow  = document.getElementById('clone-row');
+    const clone     = document.getElementById('thead-clone');
+    if (!mainTable || !cloneRow) return;
+
+    // Copier les th du vrai thead dans le clone
+    const ths = mainTable.querySelectorAll('thead th');
+    if (cloneRow.children.length === 0) {
+      ths.forEach(th => {
+        const c = th.cloneNode(true);
+        cloneRow.appendChild(c);
+      });
+    }
+
+    // Synchroniser les largeurs
+    const mainThs = mainTable.querySelectorAll('thead th');
+    const cloneThs = cloneRow.querySelectorAll('th');
+    mainThs.forEach((th, i) => {
+      if (cloneThs[i]) {
+        cloneThs[i].style.width = th.offsetWidth + 'px';
+        cloneThs[i].style.minWidth = th.offsetWidth + 'px';
+      }
+    });
+
+    // Aligner le clone avec la position gauche du tableau
+    const tableRect = mainTable.getBoundingClientRect();
+    const inner = document.getElementById('clone-inner');
+    inner.style.marginLeft = tableRect.left + 'px';
+    inner.style.marginRight = (window.innerWidth - tableRect.right) + 'px';
+  }
+
+  function onScroll() {
+    const mainTable = document.getElementById('main-table');
+    const clone = document.getElementById('thead-clone');
+    if (!mainTable || !clone) return;
+    const thead = mainTable.querySelector('thead');
+    if (!thead) return;
+    const rect = thead.getBoundingClientRect();
+    // Afficher le clone quand le thead natif est sorti au-dessus du viewport
+    if (rect.bottom <= 57) {
+      syncClone();
+      clone.style.display = 'block';
+    } else {
+      clone.style.display = 'none';
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', syncClone, { passive: true });
+})();
+</script>
+
 </body>
 </html>
