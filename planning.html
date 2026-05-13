@@ -128,8 +128,8 @@ function slotHTML(slot) {
 
 function freeHTML(futurs) {
   if (!futurs || futurs.length === 0) return '<div class="free-now">Disponible</div>';
-  const sorted = [...futurs].sort((a,b) => new Date(b.end)-new Date(a.end));
-  const lastEnd = new Date(sorted[0].end);
+  const sorted = [...futurs].sort((a,b) => new Date(a.end)-new Date(b.end));
+const lastEnd = new Date(sorted[1].end);
   const day = lastEnd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
   const h   = lastEnd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   return `<div class="free-slot"><div class="free-label">${day}</div><div class="free-time">dès ${h}</div></div>`;
