@@ -38,8 +38,9 @@
   #thead-clone th:first-child{border-left:none;text-align:left;padding-left:10px;}
   #thead-clone th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
   tbody tr{border-bottom:1px solid var(--border);}
+  tbody tr.slot-noon td{border-top:2px dashed #d4cfc8;}
   tbody tr:last-child{border-bottom:none;}
-  tbody tr.day-first td{border-top:2px solid var(--border);}
+  tbody tr.day-first td{border-top:3px solid #b8b4ac;}
   td{padding:0;vertical-align:middle;border-left:1px solid var(--border);height:36px;}
   td:first-child{border-left:none;}
   td.date-cell{padding:4px 8px;background:#fafaf8;min-width:90px;}
@@ -66,7 +67,7 @@
 <header>
   <div class="header-left">
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
-    <div class="subtitle">Réservation rapide de grandes salles — 31 jours</div>
+    <div class="subtitle">Réservation rapide de grandes salles — 30 jours</div>
   </div>
   <div style="display:flex;gap:20px;align-items:center;">
     <div class="legend">
@@ -211,7 +212,7 @@ function buildTable(data) {
   days.forEach((day, di) => {
     SLOTS.forEach((slot, si) => {
       const isFirst = si === 0;
-      html += `<tr class="${isFirst ? 'day-first' : ''}">`;
+      html += `<tr class="${isFirst ? 'day-first' : ''}${si===2?' slot-noon':''}">`;
 
       if (isFirst) {
         const dn = dayNames[day.getDay()];
