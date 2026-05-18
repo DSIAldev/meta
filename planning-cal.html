@@ -119,10 +119,10 @@ const SALLE_EMAIL = {
 };
 
 const SLOTS = [
-  {label:'08–10', from:8,  to:10},
-  {label:'10–12', from:10, to:12},
-  {label:'14–16', from:14, to:16},
-  {label:'16–18', from:16, to:18},
+  {label:'08h–10h', from:8,  to:10},
+  {label:'10h–12h', from:10, to:12},
+  {label:'14h–16h', from:14, to:16},
+  {label:'16h–18', from:16, to:18},
 ];
 
 const ORGS = {
@@ -236,13 +236,27 @@ function buildTable(data) {
           const email = SALLE_EMAIL[nom] || '';
           const dayISO = day.toISOString().slice(0,10);
           onclick = `onclick="reserver('${nom}','${email}',new Date('${dayISO}'),{from:${slot.from},to:${slot.to}})"`;
-          content = '+ Réserver';
+          content = `+ Réserver (${slot.label})`;
           title = `Réserver ${nom} — ${slot.label}`;
         } else if (evts.length === 1) {
           barClass = orgClass(evts[0].organizer);
-          title = `${slot.label} — ${evts[0].subject||'?'} (${evts[0].organizer||''})`;
+          const org = evts[0].organizer || '';
+          const d = (org.split('@')[1]||'').toLowerCase();
+          const label = d.includes('angers-developpement') ? 'Aldev'
+                      : d.includes('angerstechnopole')     ? 'Technopôle'
+                      : d.includes('maineetloire.cci')     ? 'CCI'
+                      : evts[0].subject || '?';
+          content = label;
+          title = `${slot.label} — ${evts[0].subject||'?'} (${org})`;
         } else {
           barClass = orgClass(evts[0].organizer);
+          const org = evts[0].organizer || '';
+          const d = (org.split('@')[1]||'').toLowerCase();
+          const label = d.includes('angers-developpement') ? 'Aldev'
+                      : d.includes('angerstechnopole')     ? 'Technopôle'
+                      : d.includes('maineetloire.cci')     ? 'CCI'
+                      : evts[0].subject || '?';
+          content = label;
           title = evts.map(e => e.subject||'?').join(' / ');
         }
 
