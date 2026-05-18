@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="refresh" content="900">
-<title>Métamorphose — Planning des salles</title>
+<title>MÉTA-NOW — 2 prochains créneaux</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
   :root {
@@ -63,8 +63,9 @@
 <header>
   <div class="header-left">
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:36px;display:block;">
-    <div class="subtitle">Planning des salles — 2 prochains créneaux · disponibilité sur 7 jours</div>
+    <div class="subtitle">MÉTA-NOW — 2 prochains créneaux</div>
   </div>
+  <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">Angers</span>
   <div class="header-right">
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
@@ -94,9 +95,9 @@
 </div>
 <script>
 const ORGS = {
-  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev', tel: '02 52 57 01 00' },
-  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole', tel: '02 41 72 04 04' },
-  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci', tel: '02 41 20 49 00' }
+  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev' },
+  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole' },
+  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci' }
 };
 
 function getOrg(email) {
@@ -118,18 +119,17 @@ function slotHTML(slot) {
   const s = fmtSlot(slot.start);
   const e = fmtSlot(slot.end);
   const org = getOrg(slot.organizer);
-  const heures = slot.isallday ? 'Journée entière' : `${s.h}–${e.h}`;
   return `<div class="slot">
-    <div class="slot-time"><span>${s.day}</span><span>${heures}</span></div>
+    <div class="slot-time"><span>${s.day}</span><span>${s.h}–${e.h}</span></div>
     <div class="slot-title">${slot.subject || '—'}</div>
-    <span class="slot-org ${org.css}" title="${org.tel || ''}">${org.label}</span>
+    <span class="slot-org ${org.css}">${org.label}</span>
   </div>`;
 }
 
 function freeHTML(futurs) {
   if (!futurs || futurs.length === 0) return '<div class="free-now">Disponible</div>';
-  const sorted = [...futurs].sort((a,b) => new Date(a.end)-new Date(b.end));
-const lastEnd = new Date(sorted[1].end);
+  const sorted = [...futurs].sort((a,b) => new Date(b.end)-new Date(a.end));
+  const lastEnd = new Date(sorted[0].end);
   const day = lastEnd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
   const h   = lastEnd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   return `<div class="free-slot"><div class="free-label">${day}</div><div class="free-time">dès ${h}</div></div>`;
@@ -153,7 +153,7 @@ function buildTable(data) {
       <td class="sc">${salle.nom}</td>
       <td class="cc">${slotHTML(futurs[0])}</td>
       <td class="cc">${slotHTML(futurs[1])}</td>
-      <td class="lc">${futurs.length >= 2 ? freeHTML(futurs) : '<div class="free-now">Disponible</div>'}</td>
+      <td class="lc">${freeHTML(futurs)}</td>
     </tr>`;
   }
   tbody.innerHTML = html;
