@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Réservation rapide</title>
+<title>MÉTA-FLASH — Réservation 31 jours</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
   :root {
@@ -67,7 +67,7 @@
 <header>
   <div class="header-left">
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
-    <div class="subtitle">Réservation rapide de grandes salles — 30 jours</div>
+    <div class="subtitle">MÉTA-FLASH — Réservation toutes salles · 31 jours</div>
   </div>
   <div style="display:flex;gap:20px;align-items:center;">
     <div class="legend">
@@ -77,6 +77,7 @@
       <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
     </div>
+    <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">Angers</span>
     <div class="update-time">Mis à jour : <span id="updated">—</span> · par <span style="color:var(--aldev);font-weight:600">Aldev</span></div>
   </div>
 </header>
@@ -119,10 +120,10 @@ const SALLE_EMAIL = {
 };
 
 const SLOTS = [
-  {label:'08h–10h', from:8,  to:10},
-  {label:'10h–12h', from:10, to:12},
-  {label:'14h–16h', from:14, to:16},
-  {label:'16h–18h', from:16, to:18},
+  {label:'08–10', from:8,  to:10},
+  {label:'10–12', from:10, to:12},
+  {label:'14–16', from:14, to:16},
+  {label:'16–18', from:16, to:18},
 ];
 
 const ORGS = {
@@ -204,7 +205,7 @@ function buildTable(data) {
   const sallesMap = {};
   (data.salles||[]).forEach(s => sallesMap[s.nom] = s.créneaux||[]);
 
-  const days = workdays(new Date(), 30);
+  const days = workdays(new Date(), 31);
   const dayNames  = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
   const monthNames = ['janv.','fév.','mars','avril','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 
