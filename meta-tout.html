@@ -22,7 +22,7 @@
   .nav-section{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
   .nav-section:last-child{margin-bottom:0;}
   .nav-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;min-width:90px;color:var(--text-muted);}
-  .nav-label.e1{color:var(--technopole);} .nav-label.e7{color:var(--accent);}
+  .nav-label.e1{color:var(--technopole);} .nav-label.e4{color:var(--aldev);} .nav-label.e7{color:var(--accent);}
   .pills{display:flex;gap:4px;flex-wrap:wrap;}
   .pill{background:#f4f2ee;border:1.5px solid var(--border);border-radius:var(--radius);padding:4px 9px;font-size:11px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
   .pill:hover{border-color:var(--accent);color:var(--text-primary);}
@@ -40,6 +40,8 @@
   .room-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
   .room-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:#fafaf8;}
   .room-icon{width:38px;height:38px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;background:var(--technopole);color:#fff;font-size:14px;font-weight:600;flex-shrink:0;}
+  .room-icon.aldev{background:var(--aldev);}
+  .tag.aldev{background:var(--aldev);color:#fff;}
   .room-name{font-size:14px;font-weight:600;} .room-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
   .room-tags{display:flex;gap:6px;margin-left:auto;align-items:center;}
   .tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;}
@@ -63,33 +65,46 @@
 </header>
 <div class="nav-bar">
   <div class="nav-section"><span class="nav-label e1">1er étage</span><div class="pills" id="pills-1"></div></div>
+  <div class="nav-section"><span class="nav-label e4">4e étage</span><div class="pills" id="pills-4"></div></div>
   <div class="nav-section"><span class="nav-label e7">7e étage</span><div class="pills" id="pills-7"></div></div>
 </div>
 <div class="select-bar"><div class="sw"><select id="roomSelect"><option value="">— Choisir une salle —</option></select></div></div>
 <div class="main" id="main">
-  <div class="empty-state"><div class="icon">🏢</div><h3>Sélectionnez une salle</h3><p>1er étage (Auditorium, Le Club) · 7e étage (10 salles)</p></div>
+  <div class="empty-state"><div class="icon">🏢</div><h3>Sélectionnez une salle</h3><p>1er étage (Auditorium, Le Club) · 4e étage (10 salles) · 7e étage (10 salles)</p></div>
 </div>
 <footer>Angers Loire Développement &nbsp;·&nbsp; Connexion Microsoft 365 requise</footer>
 <script>
 const salles = [
-  {nom:"Auditorium",  etage:"1er étage",cap:"200p",email:"auditorium@la-fabrique-angers.fr",   url:"https://outlook.office365.com/owa/calendar/ec79f7477ffe4776a0a074cba5d86132@la-fabrique-angers.fr/8ab6e23742a34c7dbef37fb77f7721719563029404070182945/calendar.html"},
-  {nom:"Le Club",     etage:"1er étage",cap:"20p", email:"leclub@la-fabrique-angers.fr",        url:"https://outlook.office365.com/owa/calendar/5434c594092144d6ba4f3751bb24cd9d@la-fabrique-angers.fr/5ef09a70adbd415da042918d0528b8593608413631019253131/calendar.html"},
-  {nom:"Aubance",     etage:"7e étage", cap:"4p",  email:"aubance@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/47caa64003ea4ec8b14558ea7b036cce@la-fabrique-angers.fr/8228029b692741038f0ce4cd36a6231517184690322135196931/calendar.html"},
-  {nom:"Authion",     etage:"7e étage", cap:"10p", email:"authion@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/386e43ca8e1443148989aa542a7f118c@la-fabrique-angers.fr/fcc14be50d6440daadd501baf6881ff715653542258581911855/calendar.html"},
-  {nom:"Confluences", etage:"7e étage", cap:"30p", email:"confluences@la-fabrique-angers.fr",   url:"https://outlook.office365.com/owa/calendar/27af79a6ecb34868b464a91f3caa021c@la-fabrique-angers.fr/aaf45c9a65fe4f03bd1d570c3026b9eb5193804746135722429/calendar.html"},
-  {nom:"Layon",       etage:"7e étage", cap:"4p",  email:"layon@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/ee0f4fed56ee413cb27a58a876103564@la-fabrique-angers.fr/a8219153e4ac4f95bd17c2eb8f28078510650499140351685678/calendar.html"},
-  {nom:"Loire",       etage:"7e étage", cap:"19p", email:"loire@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/f9720f735c304faba8fdcd95bcfaa688@la-fabrique-angers.fr/a6bf042dfb4547589dac035e3319a9f712601122122703450143/calendar.html"},
-  {nom:"Louet",       etage:"7e étage", cap:"4p",  email:"louet@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/951370a113b845cd8096681028bc2795@la-fabrique-angers.fr/b93af82e9fdb4f378c09dd896d14df0610680814693575090329/calendar.html"},
-  {nom:"Maine",       etage:"7e étage", cap:"18p", email:"maine@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/f08df34e74504784b294961ba3699cc6@la-fabrique-angers.fr/a9301020afc24079b2516b30b869913f13865804254518916487/calendar.html"},
-  {nom:"Mayenne",     etage:"7e étage", cap:"13p", email:"mayenne@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/d5d82a320d364fad80401577a93b3215@la-fabrique-angers.fr/c98a7ef61397425db9307b9665a084214192016006752970091/calendar.html"},
-  {nom:"Oudon",       etage:"7e étage", cap:"8p",  email:"oudon@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/13a6455a57ee4cd9b312c662526a2d81@la-fabrique-angers.fr/42375a80c24843819d883cba87c5ae033893890819460172199/calendar.html"},
-  {nom:"Sarthe",      etage:"7e étage", cap:"15p", email:"sarthe@la-fabrique-angers.fr",        url:"https://outlook.office365.com/owa/calendar/d3d1170b6b124079b6ecc7d1399bcc93@la-fabrique-angers.fr/d6194045f0f142cc87e27d1856128eda10612498876144757076/calendar.html"},
+  {bat:"Métamorphose", nom:"Auditorium",  etage:"1er étage",cap:"200p",email:"auditorium@la-fabrique-angers.fr",   url:"https://outlook.office365.com/owa/calendar/ec79f7477ffe4776a0a074cba5d86132@la-fabrique-angers.fr/8ab6e23742a34c7dbef37fb77f7721719563029404070182945/calendar.html"},
+  {bat:"Métamorphose", nom:"Le Club",     etage:"1er étage",cap:"20p", email:"leclub@la-fabrique-angers.fr",        url:"https://outlook.office365.com/owa/calendar/5434c594092144d6ba4f3751bb24cd9d@la-fabrique-angers.fr/5ef09a70adbd415da042918d0528b8593608413631019253131/calendar.html"},
+  {bat:"Aldev", nom:"Le Cube 4",  etage:"4e étage", cap:"4p",  email:"lecube4@angers-developpement.com",     url:"https://outlook.office365.com/owa/calendar/8508278a73df4dc5a4fbe918fa57c641@angers-developpement.com/ea48e4b8efae49ce885764149de0d1bd10035827758921172206/calendar.html"},
+  {bat:"Aldev", nom:"Le Cube 6",  etage:"4e étage", cap:"6p",  email:"lecube6@angers-developpement.com",     url:"https://outlook.office365.com/owa/calendar/f37e57e9c861484dbbc0c7b85d0eb428@angers-developpement.com/a5bb9122ec5043f7adc7f14b817a79b814975944164545035515/calendar.html"},
+  {bat:"Aldev", nom:"Le Cube 7",  etage:"4e étage", cap:"7p",  email:"lecube7@angers-developpement.com",     url:"https://outlook.office365.com/owa/calendar/4d5c51e1207c4333862b2bcdb914d821@angers-developpement.com/fc1eaefee43c41639a881247323a66443413721622036872355/calendar.html"},
+  {bat:"Aldev", nom:"Ardoisières",etage:"4e étage", cap:"7p",  email:"ardoisieres@angers-developpement.com", url:"https://outlook.office365.com/owa/calendar/fce9f2faeec849d59f88c9757ec929f0@angers-developpement.com/5a282111aded4402a420c93ac6c520a313009883625753900321/calendar.html"},
+  {bat:"Aldev", nom:"Bessonneau", etage:"4e étage", cap:"4p",  email:"bessonneau@angers-developpement.com",  url:"https://outlook.office365.com/owa/calendar/351eda3a06254752a2d432881b23a07f@angers-developpement.com/59f7963a21164359b5e7611e175b5cc018312707664465997704/calendar.html"},
+  {bat:"Aldev", nom:"Bouvet",     etage:"4e étage", cap:"4p",  email:"bouvet@angers-developpement.com",      url:"https://outlook.office365.com/owa/calendar/d0180ac65fcc4096b487fdb0c871a0c9@angers-developpement.com/7d29cb68afd94463bca50c103c708e2514872757876419082790/calendar.html"},
+  {bat:"Aldev", nom:"Bull",       etage:"4e étage", cap:"10p", email:"bull@angers-developpement.com",        url:"https://outlook.office365.com/owa/calendar/8d575b7e9e244504941c173e8f7e48bf@angers-developpement.com/b6939a22b39445788760749d68ccf93214786046692653777466/calendar.html"},
+  {bat:"Aldev", nom:"Courant",    etage:"4e étage", cap:"3p",  email:"courant@angers-developpement.com",     url:"https://outlook.office365.com/owa/calendar/addcf93a5ef1408db5bd91edb50c9cde@angers-developpement.com/98aa11b8e009414b8579446161c3329c8705848835929001161/calendar.html"},
+  {bat:"Aldev", nom:"Giffard",    etage:"4e étage", cap:"5p",  email:"giffard@angers-developpement.com",     url:"https://outlook.office365.com/owa/calendar/8e663ac93f004668bee392efae6107fd@angers-developpement.com/088b56a5011c4da0851d1ba6d53fb3a02037977738399366100/calendar.html"},
+  {bat:"Aldev", nom:"Scania",     etage:"4e étage", cap:"10p", email:"scania@angers-developpement.com",      url:"https://outlook.office365.com/owa/calendar/9d223812f1d24e01adda81b74dfcbefb@angers-developpement.com/35c7ccd67ac64b21bf62ed33c336fb6d1071265873232054571/calendar.html"},
+  {bat:"Métamorphose", nom:"Aubance",     etage:"7e étage", cap:"4p",  email:"aubance@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/47caa64003ea4ec8b14558ea7b036cce@la-fabrique-angers.fr/8228029b692741038f0ce4cd36a6231517184690322135196931/calendar.html"},
+  {bat:"Métamorphose", nom:"Authion",     etage:"7e étage", cap:"10p", email:"authion@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/386e43ca8e1443148989aa542a7f118c@la-fabrique-angers.fr/fcc14be50d6440daadd501baf6881ff715653542258581911855/calendar.html"},
+  {bat:"Métamorphose", nom:"Confluences", etage:"7e étage", cap:"30p", email:"confluences@la-fabrique-angers.fr",   url:"https://outlook.office365.com/owa/calendar/27af79a6ecb34868b464a91f3caa021c@la-fabrique-angers.fr/aaf45c9a65fe4f03bd1d570c3026b9eb5193804746135722429/calendar.html"},
+  {bat:"Métamorphose", nom:"Layon",       etage:"7e étage", cap:"4p",  email:"layon@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/ee0f4fed56ee413cb27a58a876103564@la-fabrique-angers.fr/a8219153e4ac4f95bd17c2eb8f28078510650499140351685678/calendar.html"},
+  {bat:"Métamorphose", nom:"Loire",       etage:"7e étage", cap:"19p", email:"loire@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/f9720f735c304faba8fdcd95bcfaa688@la-fabrique-angers.fr/a6bf042dfb4547589dac035e3319a9f712601122122703450143/calendar.html"},
+  {bat:"Métamorphose", nom:"Louet",       etage:"7e étage", cap:"4p",  email:"louet@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/951370a113b845cd8096681028bc2795@la-fabrique-angers.fr/b93af82e9fdb4f378c09dd896d14df0610680814693575090329/calendar.html"},
+  {bat:"Métamorphose", nom:"Maine",       etage:"7e étage", cap:"18p", email:"maine@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/f08df34e74504784b294961ba3699cc6@la-fabrique-angers.fr/a9301020afc24079b2516b30b869913f13865804254518916487/calendar.html"},
+  {bat:"Métamorphose", nom:"Mayenne",     etage:"7e étage", cap:"13p", email:"mayenne@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/d5d82a320d364fad80401577a93b3215@la-fabrique-angers.fr/c98a7ef61397425db9307b9665a084214192016006752970091/calendar.html"},
+  {bat:"Métamorphose", nom:"Oudon",       etage:"7e étage", cap:"8p",  email:"oudon@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/13a6455a57ee4cd9b312c662526a2d81@la-fabrique-angers.fr/42375a80c24843819d883cba87c5ae033893890819460172199/calendar.html"},
+  {bat:"Métamorphose", nom:"Sarthe",      etage:"7e étage", cap:"15p", email:"sarthe@la-fabrique-angers.fr",        url:"https://outlook.office365.com/owa/calendar/d3d1170b6b124079b6ecc7d1399bcc93@la-fabrique-angers.fr/d6194045f0f142cc87e27d1856128eda10612498876144757076/calendar.html"},
 ];
 
 const pills1=document.getElementById('pills-1');
+const pills4=document.getElementById('pills-4');
 const pills7=document.getElementById('pills-7');
 const sel=document.getElementById('roomSelect');
 let og1=document.createElement('optgroup'); og1.label='1er étage';
+let og4=document.createElement('optgroup'); og4.label='4e étage — Aldev';
 let og7=document.createElement('optgroup'); og7.label='7e étage';
 
 salles.forEach((s,i)=>{
@@ -97,12 +112,12 @@ salles.forEach((s,i)=>{
   p.className='pill'; p.id='pill-'+i;
   p.innerHTML=s.nom+'<span class="cap">'+s.cap+'</span>';
   p.onclick=()=>selectRoom(i);
-  (s.etage==='1er étage'?pills1:pills7).appendChild(p);
+  (s.etage==='1er étage'?pills1:s.etage==='4e étage'?pills4:pills7).appendChild(p);
   const o=document.createElement('option');
   o.value=i; o.textContent=s.nom+' ('+s.cap+')';
-  (s.etage==='1er étage'?og1:og7).appendChild(o);
+  (s.etage==='1er étage'?og1:s.etage==='4e étage'?og4:og7).appendChild(o);
 });
-sel.appendChild(og1); sel.appendChild(og7);
+sel.appendChild(og1); sel.appendChild(og4); sel.appendChild(og7);
 sel.addEventListener('change',function(){ if(this.value!=='') selectRoom(parseInt(this.value)); });
 
 function selectRoom(idx){
@@ -114,9 +129,9 @@ function selectRoom(idx){
   document.getElementById('main').innerHTML=`
     <div class="room-card">
       <div class="room-header">
-        <div class="room-icon">${s.nom.charAt(0)}</div>
-        <div><div class="room-name">${s.nom}</div><div class="room-meta">${s.etage} · Métamorphose, MÉTA-TOUT</div></div>
-        <div class="room-tags"><span class="tag meta">Métamorphose</span><span class="tag cap">⬩ ${s.cap}</span></div>
+        <div class="room-icon ${s.bat==='Aldev'?'aldev':''}">${s.nom.charAt(0)}</div>
+        <div><div class="room-name">${s.nom}</div><div class="room-meta">${s.etage} · ${s.bat}, Angers</div></div>
+        <div class="room-tags"><span class="tag ${s.bat==='Aldev'?'aldev':'meta'}">${s.bat}</span><span class="tag cap">⬩ ${s.cap}</span></div>
       </div>
       <iframe src="${s.url}" title="Calendrier ${s.nom}" loading="lazy"></iframe>
       <div class="iframe-footer">
