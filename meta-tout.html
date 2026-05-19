@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
+<title>MÉTA-TOUT — Toutes les salles Métamorphose</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#f4f2ee;--surface:#fff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-muted:#a09d98;--text-secondary:#6b6860;
+    --accent:#2d3546;
+    --aldev:#ec2e4a;--technopole:#0f1f3d;--cci:#373cf5;--other:#4a6741;
+    --free:#2e7d5e;--free-bg:#eaf4ef;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;}
+
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .subtitle{font-size:12px;color:var(--text-muted);}
+  .legend{display:flex;gap:10px;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);}
+  .legend-dot{width:10px;height:10px;border-radius:2px;}
+  .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+
+  .main{padding:16px 20px 40px;}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  table{width:100%;border-collapse:collapse;table-layout:fixed;}
+
+  /* THEAD STICKY */
+  thead{position:sticky;top:57px;z-index:90;background:var(--surface);}
+  thead tr{border-bottom:2px solid var(--border);}
+  thead th{padding:8px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-left:1px solid var(--border);background:#f9f8f6;}
+  thead th:first-child{border-left:none;text-align:left;padding-left:10px;}
+  thead th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
+
+  /* LIGNES */
+  tbody tr{border-bottom:1px solid var(--border);}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr.day-sep td{border-top:3px solid #b8b4ac;}
+  td{padding:0;vertical-align:top;border-left:1px solid var(--border);height:auto;min-height:44px;}
+  td:first-child{border-left:none;}
+
+  /* CELLULE DATE */
+  td.date-cell{padding:8px 8px;background:#fafaf8;min-width:90px;vertical-align:middle;}
+  td.date-cell .day-name{font-size:12px;font-weight:600;color:var(--text-primary);}
+  td.date-cell .day-date{font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace;}
+
+  /* CELLULE SALLE */
+  td.room-cell{padding:4px 4px 3px;vertical-align:top;}
+
+  /* BARRES DE RÉSERVATION */
+  .bars{display:flex;flex-direction:column;gap:2px;min-height:28px;}
+  .bar{border-radius:3px;padding:2px 5px;font-size:9px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
+  .bar.org-aldev{background:var(--aldev);}
+  .bar.org-technopole{background:var(--technopole);}
+  .bar.org-cci{background:var(--cci);}
+  .bar.org-other{background:var(--other);}
+
+  /* BOUTON RÉSERVER */
+  .btn-reserver{
+    display:block;width:100%;margin-top:3px;
+    background:none;border:1px dashed #c8c4bc;border-radius:3px;
+    color:var(--free);font-size:10px;font-weight:500;font-family:'DM Sans',sans-serif;
+    padding:3px 4px;cursor:pointer;text-align:center;
+    transition:all .15s;
+  }
+  .btn-reserver:hover{background:var(--free-bg);border-color:var(--free);}
+
+  /* CLONE THEAD STICKY */
+  #thead-clone{position:fixed;top:57px;left:0;right:0;z-index:95;display:none;background:#f9f8f6;border-bottom:2px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,.06);}
+  #thead-clone table{width:100%;border-collapse:collapse;table-layout:fixed;}
+  #thead-clone th{padding:8px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-left:1px solid var(--border);background:#f9f8f6;}
+  #thead-clone th:first-child{border-left:none;text-align:left;padding-left:10px;}
+  #thead-clone th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
+    <div class="subtitle">MÉTA-TOUT — Toutes les salles · 31 jours</div>
+  </div>
+  <div style="display:flex;gap:20px;align-items:center;">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--technopole)"></div>Technopôle</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
+    </div>
+    <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">Angers</span>
+    <div class="update-time">Mis à jour : <span id="updated">—</span> · par <span style="color:var(--aldev);font-weight:600">Aldev</span></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="table-wrap">
+    <table id="main-table">
+      <thead>
+        <tr>
+          <th style="width:90px;">Jour</th>
+          <th>Auditorium<span class="cap">200p</span></th>
+          <th>Le Club<span class="cap">20p</span></th>
+          <th>Loire<span class="cap">19p</span></th>
+          <th>Maine<span class="cap">18p</span></th>
+          <th>Sarthe<span class="cap">15p</span></th>
+          <th>Mayenne<span class="cap">13p</span></th>
+          <th>Authion<span class="cap">10p</span></th>
+          <th>Oudon<span class="cap">8p</span></th>
+          <th>Aubance<span class="cap">4p</span></th>
+          <th>Layon<span class="cap">4p</span></th>
+          <th>Louet<span class="cap">4p</span></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="12" style="padding:40px;text-align:center;color:var(--text-muted);">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Clone thead sticky -->
+<div id="thead-clone">
+  <div id="clone-inner">
+    <table><thead><tr id="clone-row"></tr></thead></table>
+  </div>
+</div>
+
+<script>
+const SALLES = ['Auditorium','Le Club','Loire','Maine','Sarthe','Mayenne','Authion','Oudon','Aubance','Layon','Louet'];
+
+const SALLE_EMAIL = {
+  'Auditorium': 'auditorium@la-fabrique-angers.fr',
+  'Le Club':    'leclub@la-fabrique-angers.fr',
+  'Loire':      'loire@la-fabrique-angers.fr',
+  'Maine':      'maine@la-fabrique-angers.fr',
+  'Sarthe':     'sarthe@la-fabrique-angers.fr',
+  'Mayenne':    'mayenne@la-fabrique-angers.fr',
+  'Authion':    'authion@la-fabrique-angers.fr',
+  'Oudon':      'oudon@la-fabrique-angers.fr',
+  'Aubance':    'aubance@la-fabrique-angers.fr',
+  'Layon':      'layon@la-fabrique-angers.fr',
+  'Louet':      'louet@la-fabrique-angers.fr',
+};
+
+const ORGS = {
+  'angers-developpement.com': 'org-aldev',
+  'angerstechnopole.com':     'org-technopole',
+  'maineetloire.cci.fr':      'org-cci',
+};
+
+function orgClass(email) {
+  if (!email) return 'org-other';
+  const d = (email.split('@')[1]||'').toLowerCase();
+  return ORGS[d] || 'org-other';
+}
+
+function orgLabel(email) {
+  if (!email) return '';
+  const d = (email.split('@')[1]||'').toLowerCase();
+  if (d.includes('angers-developpement')) return 'Aldev';
+  if (d.includes('angerstechnopole'))     return 'Technopôle';
+  if (d.includes('maineetloire.cci'))     return 'CCI';
+  return d;
+}
+
+function fmtH(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function workdays(start, n) {
+  const days = []; let d = new Date(start);
+  while (days.length < n) {
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) days.push(new Date(d));
+    d.setDate(d.getDate()+1);
+  }
+  return days;
+}
+
+function getDayEvents(creneaux, day) {
+  const dayStr = day.toISOString().slice(0,10);
+  const now = new Date();
+  return (creneaux||[]).filter(c => {
+    const start = new Date(c.start);
+    const sDay  = start.toISOString().slice(0,10);
+    return sDay === dayStr || (c.isallday && sDay === dayStr);
+  }).sort((a,b) => new Date(a.start)-new Date(b.start));
+}
+
+function reserver(nom, email, day) {
+  const pad = n => String(n).padStart(2,'0');
+  const y = day.getFullYear(), mo = pad(day.getMonth()+1), d = pad(day.getDate());
+  const dtStart = `${y}${mo}${d}T090000`;
+  const dtEnd   = `${y}${mo}${d}T110000`;
+  const now     = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const uid     = `${now}-${nom.replace(/\s/g,'')}@metamorphose`;
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Métamorphose//Planning//FR','METHOD:PUBLISH',
+    'BEGIN:VEVENT',`UID:${uid}`,`DTSTAMP:${now}Z`,
+    `DTSTART;TZID=Europe/Paris:${dtStart}`,`DTEND;TZID=Europe/Paris:${dtEnd}`,
+    `SUMMARY:Réunion — ${nom}`,`LOCATION:${nom} — Métamorphose`,
+    `ATTENDEE;ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${email}`,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`reservation-${nom.replace(/\s/g,'-')}-${y}${mo}${d}.ics`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function buildTable(data) {
+  document.getElementById('updated').textContent = data.updated || '—';
+  const sallesMap = {};
+  (data.salles||[]).forEach(s => sallesMap[s.nom] = s.créneaux||[]);
+
+  const days = workdays(new Date(), 31);
+  const dayNames   = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const monthNames = ['janv.','fév.','mars','avril','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+
+  let html = '';
+  days.forEach((day, di) => {
+    const dn = dayNames[day.getDay()];
+    const dd = String(day.getDate()).padStart(2,'0');
+    const mo = monthNames[day.getMonth()];
+    const dayISO = day.toISOString().slice(0,10);
+
+    html += `<tr class="day-sep">`;
+    html += `<td class="date-cell"><div class="day-name">${dn} ${dd}</div><div class="day-date">${mo}</div></td>`;
+
+    SALLES.forEach(nom => {
+      const evts  = getDayEvents(sallesMap[nom]||[], day);
+      const email = SALLE_EMAIL[nom]||'';
+
+      let barsHtml = '<div class="bars">';
+      if (evts.length === 0) {
+        barsHtml += ''; // vide
+      } else {
+        evts.forEach(e => {
+          const cls   = orgClass(e.organizer);
+          const label = e.isallday
+            ? `Journée — ${orgLabel(e.organizer)||e.subject||''}`
+            : `${fmtH(e.start)}–${fmtH(e.end)} ${orgLabel(e.organizer)||e.subject||''}`;
+          const titleAttr = `${e.subject||''} (${e.organizer||''})`.replace(/"/g,"'");
+          barsHtml += `<div class="bar ${cls}" title="${titleAttr}">${label}</div>`;
+        });
+      }
+      // Bouton réserver toujours présent
+      barsHtml += `<button class="btn-reserver" onclick="reserver('${nom}','${email}',new Date('${dayISO}'))" title="Réserver ${nom}">+ Réserver</button>`;
+      barsHtml += '</div>';
+
+      html += `<td class="room-cell">${barsHtml}</td>`;
+    });
+
+    html += '</tr>';
+  });
+
+  document.getElementById('tbody').innerHTML = html;
+}
+
+fetch('data.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.json(); })
+  .then(buildTable)
+  .catch(err => {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="12" style="padding:40px;text-align:center;color:#a09d98;">${err.message}</td></tr>`;
+  });
+
+// Sticky thead clone
+(function() {
+  function syncClone() {
+    const mainTable = document.getElementById('main-table');
+    const cloneRow  = document.getElementById('clone-row');
+    const clone     = document.getElementById('thead-clone');
+    if (!mainTable || !cloneRow) return;
+    if (cloneRow.children.length === 0) {
+      mainTable.querySelectorAll('thead th').forEach(th => {
+        cloneRow.appendChild(th.cloneNode(true));
+      });
+    }
+    const mainThs  = mainTable.querySelectorAll('thead th');
+    const cloneThs = cloneRow.querySelectorAll('th');
+    mainThs.forEach((th,i) => {
+      if (cloneThs[i]) { cloneThs[i].style.width = th.offsetWidth+'px'; cloneThs[i].style.minWidth = th.offsetWidth+'px'; }
+    });
+    const rect  = mainTable.getBoundingClientRect();
+    const inner = document.getElementById('clone-inner');
+    inner.style.marginLeft  = rect.left+'px';
+    inner.style.marginRight = (window.innerWidth - rect.right)+'px';
+  }
+  function onScroll() {
+    const mainTable = document.getElementById('main-table');
+    const clone     = document.getElementById('thead-clone');
+    if (!mainTable || !clone) return;
+    const rect = mainTable.querySelector('thead').getBoundingClientRect();
+    if (rect.top < 57) { syncClone(); clone.style.display='block'; }
+    else { clone.style.display='none'; }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', syncClone, {passive:true});
+})();
+</script>
+</body>
+</html>
