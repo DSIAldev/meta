@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="refresh" content="900">
-<title>MÉTA-TOUT1</title>
+<title>MÉTA-TOUT — Toutes les salles Métamorphose</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
   :root {
@@ -299,7 +299,7 @@ fetch('data.json?t=' + Date.now())
     const clone     = document.getElementById('thead-clone');
     if (!mainTable || !clone) return;
     const rect = mainTable.querySelector('thead').getBoundingClientRect();
-    if (rect.bottom <= 57) { syncClone(); clone.style.display='block'; }
+    if (rect.top < 57) { syncClone(); clone.style.display='block'; }
     else { clone.style.display='none'; }
   }
   window.addEventListener('scroll', onScroll, {passive:true});
