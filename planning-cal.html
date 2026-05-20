@@ -181,7 +181,7 @@ function reserver(nom, email, day, slot) {
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
     `UID:${uid}`,
-    `DTSTAMP:${now}Z`,
+    `DTSTAMP:${now}`,
     `DTSTART;TZID=Europe/Paris:${dtStart}`,
     `DTEND;TZID=Europe/Paris:${dtEnd}`,
     `SUMMARY:Réunion — ${nom}`,
