@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MÉTA-FLASH-2</title>
+<title>MÉTA-FLASH</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
   :root {
@@ -176,8 +176,9 @@ function reserver(nom, email, day, slot) {
   const mo = pad(day.getMonth()+1);
   const d = pad(day.getDate());
 
-  const dtStart = `${y}${mo}${d}T${pad(slot.from)}0000`;
-  const dtEnd   = `${y}${mo}${d}T${pad(slot.to)}0000`;
+  // Heures en UTC : Paris été = UTC+2, donc on soustrait 2h
+  const dtStart = `${y}${mo}${d}T${pad(slot.from - 2)}0000Z`;
+  const dtEnd   = `${y}${mo}${d}T${pad(slot.to - 2)}0000Z`;
   const now     = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
   const uid     = `${now}-${nom.replace(/\s/g,'')}@metamorphose`;
 
@@ -204,8 +205,8 @@ function reserver(nom, email, day, slot) {
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${now}`,
-    `DTSTART;TZID=Europe/Paris:${dtStart}`,
-    `DTEND;TZID=Europe/Paris:${dtEnd}`,
+    `DTSTART:${dtStart}`,
+    `DTEND:${dtEnd}`,
     `SUMMARY:Réunion — ${nom}`,
     `LOCATION:${nom} — Métamorphose`,
     `ATTENDEE;ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${email}`,
