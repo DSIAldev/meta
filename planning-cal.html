@@ -148,12 +148,19 @@ function workdays(start, n) {
   return days;
 }
 
+function localDateStr(d) {
+  // Retourne YYYY-MM-DD en heure locale (pas UTC)
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
+
 function getSlotEvents(creneaux, day, slotFrom, slotTo) {
-  const dayStr = day.toISOString().slice(0,10);
+  const dayStr = localDateStr(day);
   return (creneaux||[]).filter(c => {
     const start = new Date(c.start);
     const end   = new Date(c.end);
-    const sDay  = start.toISOString().slice(0,10);
+    const sDay  = localDateStr(start);
     if (c.isallday) return sDay === dayStr;
     if (sDay !== dayStr) return false;
     const sh = start.getHours() + start.getMinutes()/60;
@@ -235,8 +242,8 @@ function buildTable(data) {
 
         if (evts.length === 0) {
           const email = SALLE_EMAIL[nom] || '';
-          const dayISO = day.toISOString().slice(0,10);
-          onclick = `onclick="reserver('${nom}','${email}',new Date('${dayISO}'),{from:${slot.from},to:${slot.to}})"`;
+          const dayISO = localDateStr(day);
+          onclick = `onclick="reserver('${nom}','${email}',new Date(${day.getFullYear()},${day.getMonth()},${day.getDate()}),{from:${slot.from},to:${slot.to}})"`;
           content = `+ Réserver (${slot.label})`;
           title = `Réserver ${nom} — ${slot.label}`;
         } else if (evts.length === 1) {
