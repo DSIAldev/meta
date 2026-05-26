@@ -175,14 +175,33 @@ function nextFreeSlot(allCreneaux, refDate) {
     return null;
   }
 
-  // Recherche sur 60 jours ouvrés max
-  let day = nextWorkday(refDate);
+  // Recherche sur 60 jours ouvrés max, en démarrant AUJOURD'HUI
+  const now = refDate; // heure courante (pour ignorer les plages déjà passées)
+  const nowMins = minsOf(now); // minutes écoulées depuis minuit aujourd'hui
+
+  // Jour courant (minuit)
+  let day = new Date(now);
+  day.setHours(0, 0, 0, 0);
+  // Si week-end, avancer au prochain lundi
+  while (day.getDay() === 0 || day.getDay() === 6) day.setDate(day.getDate() + 1);
+
   for (let i = 0; i < 60; i++) {
+    const isToday = (day.toDateString() === now.toDateString());
     const busy = busyMins(day, allCreneaux);
+
     for (const win of WINDOWS) {
-      const free = firstFreeIn(win.start, win.end, busy);
+      // Pour aujourd'hui : le début effectif de la fenêtre = max(win.start, nowMins)
+      // On garde winStart tel quel pour firstFreeIn, mais on ajuste le cursor initial
+      const effectiveWinStart = isToday ? Math.max(win.start, nowMins) : win.start;
+      // Si la fenêtre est déjà entièrement passée aujourd'hui, skip
+      if (win.end - effectiveWinStart < MIN_DURATION) continue;
+
+      const free = firstFreeIn(effectiveWinStart, win.end, busy);
       if (free) {
-        const label = day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
+        const isNow = isToday;
+        const label = isNow
+          ? "Aujourd'hui"
+          : day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
         const hStart = String(Math.floor(free.s / 60)).padStart(2,'0') + ':' + String(free.s % 60).padStart(2,'0');
         const hEnd   = String(Math.floor(free.e / 60)).padStart(2,'0') + ':' + String(free.e % 60).padStart(2,'0');
         return `<div class="free-slot"><div class="free-label">${label}</div><div class="free-time">${hStart}–${hEnd}</div></div>`;
