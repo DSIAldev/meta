@@ -126,18 +126,86 @@ function slotHTML(slot) {
   </div>`;
 }
 
-function freeHTML(futurs) {
-  if (!futurs || futurs.length === 0) return '<div class="free-now">Disponible</div>';
-  const sorted = [...futurs].sort((a,b) => new Date(b.end)-new Date(a.end));
-  const lastEnd = new Date(sorted[0].end);
-  const day = lastEnd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-  const h   = lastEnd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  return `<div class="free-slot"><div class="free-label">${day}</div><div class="free-time">dès ${h}</div></div>`;
+function nextFreeSlot(allCreneaux, refDate) {
+  // Plages horaires candidates (minutes depuis minuit)
+  const WINDOWS = [
+    { start: 9*60, end: 12*60 },   // 09:00–12:00
+    { start: 14*60, end: 18*60 }   // 14:00–18:00
+  ];
+  const MIN_DURATION = 2 * 60; // 2h en minutes
+
+  // Premier jour ouvré à partir de refDate (exclu)
+  function nextWorkday(d) {
+    const nd = new Date(d);
+    nd.setHours(0, 0, 0, 0);
+    nd.setDate(nd.getDate() + 1);
+    while (nd.getDay() === 0 || nd.getDay() === 6) nd.setDate(nd.getDate() + 1);
+    return nd;
+  }
+
+  // Retourne les minutes depuis minuit pour une Date
+  function minsOf(d) { return d.getHours() * 60 + d.getMinutes(); }
+
+  // Pour un jour donné (Date à minuit), les créneaux qui s'y chevauchent (en minutes)
+  function busyMins(day, creneaux) {
+    const dayStart = day.getTime();
+    const dayEnd   = dayStart + 24*3600*1000;
+    return creneaux
+      .filter(c => new Date(c.start).getTime() < dayEnd && new Date(c.end).getTime() > dayStart)
+      .map(c => ({
+        s: Math.max(minsOf(new Date(c.start)), 0),
+        e: Math.min(minsOf(new Date(c.end)), 24*60)
+      }))
+      .sort((a, b) => a.s - b.s);
+  }
+
+  // Dans une fenêtre [winStart, winEnd], cherche la première sous-plage libre ≥ MIN_DURATION
+  // en tenant compte des blocs occupés
+  function firstFreeIn(winStart, winEnd, busy) {
+    let cursor = winStart;
+    for (const blk of busy) {
+      if (blk.s >= winEnd) break;          // bloc après la fenêtre
+      if (blk.e <= winStart) continue;     // bloc avant la fenêtre
+      const freeEnd = Math.min(blk.s, winEnd);
+      if (freeEnd - cursor >= MIN_DURATION) return { s: cursor, e: freeEnd };
+      cursor = Math.max(cursor, blk.e);
+    }
+    // Fin de fenêtre après les blocs
+    if (winEnd - cursor >= MIN_DURATION) return { s: cursor, e: winEnd };
+    return null;
+  }
+
+  // Recherche sur 60 jours ouvrés max
+  let day = nextWorkday(refDate);
+  for (let i = 0; i < 60; i++) {
+    const busy = busyMins(day, allCreneaux);
+    for (const win of WINDOWS) {
+      const free = firstFreeIn(win.start, win.end, busy);
+      if (free) {
+        const label = day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
+        const hStart = String(Math.floor(free.s / 60)).padStart(2,'0') + ':' + String(free.s % 60).padStart(2,'0');
+        const hEnd   = String(Math.floor(free.e / 60)).padStart(2,'0') + ':' + String(free.e % 60).padStart(2,'0');
+        return `<div class="free-slot"><div class="free-label">${label}</div><div class="free-time">${hStart}–${hEnd}</div></div>`;
+      }
+    }
+    // Jour ouvré suivant
+    day.setDate(day.getDate() + 1);
+    while (day.getDay() === 0 || day.getDay() === 6) day.setDate(day.getDate() + 1);
+  }
+  return '<div class="free-now">Aucun créneau libre trouvé</div>';
 }
 
 function buildTable(data) {
   document.getElementById('updated').textContent = data.updated || '—';
   const tbody = document.getElementById('tbody');
+
+  // Référence temporelle = date de mise à jour du JSON (format "26/05/2026 15:00")
+  let refDate = new Date();
+  if (data.updated) {
+    const m = data.updated.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+    if (m) refDate = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]);
+  }
+
   let html = '';
   let lastEtage = null;
   for (const salle of data.salles) {
@@ -153,7 +221,7 @@ function buildTable(data) {
       <td class="sc">${salle.nom}</td>
       <td class="cc">${slotHTML(futurs[0])}</td>
       <td class="cc">${slotHTML(futurs[1])}</td>
-      <td class="lc">${freeHTML(futurs)}</td>
+      <td class="lc">${nextFreeSlot(salle.créneaux || [], refDate)}</td>
     </tr>`;
   }
   tbody.innerHTML = html;
