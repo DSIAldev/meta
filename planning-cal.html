@@ -169,58 +169,32 @@ function getSlotEvents(creneaux, day, slotFrom, slotTo) {
   });
 }
 
-// Génère et télécharge un fichier .ics pour réserver la salle
+// Ouvre le compositeur de réunion Outlook Web, prérempli, pour réserver la salle.
+// (Le téléchargement d'un .ics local est volontairement évité : sans propriété
+// ORGANIZER, Outlook te désigne par défaut comme organisateur d'un fichier ouvert
+// en local, mais sans passer par un vrai envoi — impossible alors de l'accepter
+// ou de l'enregistrer, et le rdv n'apparaît jamais dans ton calendrier. Passer par
+// le lien de composition Outlook Web garantit un vrai envoi : tu restes
+// organisateur, la salle est invitée, et le rdv est enregistré dès que tu cliques
+// sur Envoyer.)
 function reserver(nom, email, day, slot) {
-  const pad = n => String(n).padStart(2,'0');
-  const y = day.getFullYear();
-  const mo = pad(day.getMonth()+1);
-  const d = pad(day.getDate());
+  // new Date(...) est interprété en heure locale du navigateur (Europe/Paris) ;
+  // toISOString() convertit en UTC en tenant compte automatiquement de
+  // l'heure d'été/hiver, contrairement à l'ancien décalage fixe de -2h.
+  const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), slot.from, 0, 0);
+  const end   = new Date(day.getFullYear(), day.getMonth(), day.getDate(), slot.to,   0, 0);
 
-  // Heures en UTC : Paris été = UTC+2, donc on soustrait 2h
-  const dtStart = `${y}${mo}${d}T${pad(slot.from - 2)}0000Z`;
-  const dtEnd   = `${y}${mo}${d}T${pad(slot.to - 2)}0000Z`;
-  const now     = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-  const uid     = `${now}-${nom.replace(/\s/g,'')}@metamorphose`;
+  const params = new URLSearchParams({
+    path: '/calendar/action/compose',
+    rru: 'addevent',
+    startdt: start.toISOString(),
+    enddt: end.toISOString(),
+    subject: `Réunion — ${nom}`,
+    location: `${nom} — Métamorphose`,
+    to: email,
+  });
 
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Métamorphose//Planning//FR',
-    'METHOD:REQUEST',
-    'BEGIN:VTIMEZONE',
-    'TZID:Europe/Paris',
-    'BEGIN:STANDARD',
-    'DTSTART:19701025T030000',
-    'TZOFFSETFROM:+0200',
-    'TZOFFSETTO:+0100',
-    'TZNAME:CET',
-    'END:STANDARD',
-    'BEGIN:DAYLIGHT',
-    'DTSTART:19700329T020000',
-    'TZOFFSETFROM:+0100',
-    'TZOFFSETTO:+0200',
-    'TZNAME:CEST',
-    'END:DAYLIGHT',
-    'END:VTIMEZONE',
-    'BEGIN:VEVENT',
-    `UID:${uid}`,
-    `DTSTAMP:${now}`,
-    `DTSTART:${dtStart}`,
-    `DTEND:${dtEnd}`,
-    `SUMMARY:Réunion — ${nom}`,
-    `LOCATION:${nom} — Métamorphose`,
-    `ATTENDEE;ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${email}`,
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-
-  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `reservation-${nom.replace(/\s/g,'-')}-${y}${mo}${d}.ics`;
-  a.click();
-  URL.revokeObjectURL(url);
+  window.open('https://outlook.office.com/calendar/deeplink/compose?' + params.toString(), '_blank');
 }
 
 function buildTable(data) {
