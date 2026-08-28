@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MÉTA-TOUT</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f4f2ee;--surface:#fff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-muted:#a09d98;--text-secondary:#6b6860;
+    --accent:#2d3546;--aldev:#ec2e4a;--technopole:#0f1f3d;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .header-title{font-size:13px;font-weight:600;color:var(--text-primary);}
+  .header-sub{font-size:11px;color:var(--text-muted);}
+  .nav-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;position:sticky;top:57px;z-index:90;}
+  .nav-section{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+  .nav-section:last-child{margin-bottom:0;}
+  .nav-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;min-width:90px;color:var(--text-muted);}
+  .nav-label.e1{color:var(--technopole);} .nav-label.e7{color:var(--accent);}
+  .pills{display:flex;gap:4px;flex-wrap:wrap;}
+  .pill{background:#f4f2ee;border:1.5px solid var(--border);border-radius:var(--radius);padding:4px 9px;font-size:11px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+  .pill:hover{border-color:var(--accent);color:var(--text-primary);}
+  .pill.active{background:var(--technopole);border-color:var(--technopole);color:#fff;}
+  .pill .cap{opacity:.7;margin-left:3px;font-size:10px;}
+  .select-bar{display:none;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);}
+  .sw{position:relative;} .sw::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;}
+  select{width:100%;appearance:none;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px 28px 8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-primary);}
+  @media(max-width:768px){.nav-bar{display:none;}.select-bar{display:block;}}
+  .main{padding:20px;}
+  .empty-state{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:60px 20px;text-align:center;color:var(--text-muted);box-shadow:var(--shadow);}
+  .empty-state .icon{font-size:2.5rem;margin-bottom:12px;}
+  .empty-state h3{font-size:15px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;}
+  .empty-state p{font-size:12px;}
+  .room-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  .room-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:#fafaf8;}
+  .room-icon{width:38px;height:38px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;background:var(--technopole);color:#fff;font-size:14px;font-weight:600;flex-shrink:0;}
+  .room-name{font-size:14px;font-weight:600;} .room-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+  .room-tags{display:flex;gap:6px;margin-left:auto;align-items:center;}
+  .tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;}
+  .tag.meta{background:var(--technopole);color:#fff;}
+  .tag.cap{background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);}
+  iframe{width:100%;height:640px;border:none;display:block;}
+  .iframe-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafaf8;}
+  .iframe-footer span{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .btn-reserve{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:opacity .15s;}
+  .btn-reserve:hover{opacity:.85;}
+  footer{text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);background:var(--surface);margin-top:20px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
+    <div><div class="header-title">TOUTES LES SALLES</div><div class="header-sub">par Aldev-SI</div></div>
+  </div>
+  <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">MÉTA-TOUT</span>
+</header>
+<div class="nav-bar">
+  <div class="nav-section"><span class="nav-label e1">1er étage</span><div class="pills" id="pills-1"></div></div>
+  <div class="nav-section"><span class="nav-label e7">7e étage</span><div class="pills" id="pills-7"></div></div>
+</div>
+<div class="select-bar"><div class="sw"><select id="roomSelect"><option value="">— Choisir une salle —</option></select></div></div>
+<div class="main" id="main">
+  <div class="empty-state"><div class="icon">🏢</div><h3>Sélectionnez une salle</h3><p>1er étage (Auditorium, Le Club) · 7e étage (10 salles)</p></div>
+</div>
+<footer>Angers Loire Développement &nbsp;·&nbsp; Connexion Microsoft 365 requise</footer>
+<script>
+const salles = [
+  {nom:"Auditorium",  etage:"1er étage",cap:"200p",email:"auditorium@la-fabrique-angers.fr",   url:"https://outlook.office365.com/owa/calendar/ec79f7477ffe4776a0a074cba5d86132@la-fabrique-angers.fr/8ab6e23742a34c7dbef37fb77f7721719563029404070182945/calendar.html"},
+  {nom:"Le Club",     etage:"1er étage",cap:"20p", email:"leclub@la-fabrique-angers.fr",        url:"https://outlook.office365.com/owa/calendar/5434c594092144d6ba4f3751bb24cd9d@la-fabrique-angers.fr/5ef09a70adbd415da042918d0528b8593608413631019253131/calendar.html"},
+  {nom:"Aubance",     etage:"7e étage", cap:"4p",  email:"aubance@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/47caa64003ea4ec8b14558ea7b036cce@la-fabrique-angers.fr/8228029b692741038f0ce4cd36a6231517184690322135196931/calendar.html"},
+  {nom:"Authion",     etage:"7e étage", cap:"10p", email:"authion@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/386e43ca8e1443148989aa542a7f118c@la-fabrique-angers.fr/fcc14be50d6440daadd501baf6881ff715653542258581911855/calendar.html"},
+  {nom:"Confluences", etage:"7e étage", cap:"30p", email:"confluences@la-fabrique-angers.fr",   url:"https://outlook.office365.com/owa/calendar/27af79a6ecb34868b464a91f3caa021c@la-fabrique-angers.fr/aaf45c9a65fe4f03bd1d570c3026b9eb5193804746135722429/calendar.html"},
+  {nom:"Layon",       etage:"7e étage", cap:"4p",  email:"layon@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/ee0f4fed56ee413cb27a58a876103564@la-fabrique-angers.fr/a8219153e4ac4f95bd17c2eb8f28078510650499140351685678/calendar.html"},
+  {nom:"Loire",       etage:"7e étage", cap:"19p+", email:"loire@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/f9720f735c304faba8fdcd95bcfaa688@la-fabrique-angers.fr/a6bf042dfb4547589dac035e3319a9f712601122122703450143/calendar.html"},
+  {nom:"Louet",       etage:"7e étage", cap:"4p",  email:"louet@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/951370a113b845cd8096681028bc2795@la-fabrique-angers.fr/b93af82e9fdb4f378c09dd896d14df0610680814693575090329/calendar.html"},
+  {nom:"Maine",       etage:"7e étage", cap:"18p+", email:"maine@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/f08df34e74504784b294961ba3699cc6@la-fabrique-angers.fr/a9301020afc24079b2516b30b869913f13865804254518916487/calendar.html"},
+  {nom:"Mayenne",     etage:"7e étage", cap:"13p", email:"mayenne@la-fabrique-angers.fr",       url:"https://outlook.office365.com/owa/calendar/d5d82a320d364fad80401577a93b3215@la-fabrique-angers.fr/c98a7ef61397425db9307b9665a084214192016006752970091/calendar.html"},
+  {nom:"Oudon",       etage:"7e étage", cap:"8p",  email:"oudon@la-fabrique-angers.fr",         url:"https://outlook.office365.com/owa/calendar/13a6455a57ee4cd9b312c662526a2d81@la-fabrique-angers.fr/42375a80c24843819d883cba87c5ae033893890819460172199/calendar.html"},
+  {nom:"Sarthe",      etage:"7e étage", cap:"15p", email:"sarthe@la-fabrique-angers.fr",        url:"https://outlook.office365.com/owa/calendar/d3d1170b6b124079b6ecc7d1399bcc93@la-fabrique-angers.fr/d6194045f0f142cc87e27d1856128eda10612498876144757076/calendar.html"},
+];
+
+const pills1=document.getElementById('pills-1');
+const pills7=document.getElementById('pills-7');
+const sel=document.getElementById('roomSelect');
+let og1=document.createElement('optgroup'); og1.label='1er étage';
+let og7=document.createElement('optgroup'); og7.label='7e étage';
+
+salles.forEach((s,i)=>{
+  const p=document.createElement('button');
+  p.className='pill'; p.id='pill-'+i;
+  p.innerHTML=s.nom+'<span class="cap">'+s.cap+'</span>';
+  p.onclick=()=>selectRoom(i);
+  (s.etage==='1er étage'?pills1:pills7).appendChild(p);
+  const o=document.createElement('option');
+  o.value=i; o.textContent=s.nom+' ('+s.cap+')';
+  (s.etage==='1er étage'?og1:og7).appendChild(o);
+});
+sel.appendChild(og1); sel.appendChild(og7);
+sel.addEventListener('change',function(){ if(this.value!=='') selectRoom(parseInt(this.value)); });
+
+function selectRoom(idx){
+  const s=salles[idx];
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById('pill-'+idx);
+  if(p){p.classList.add('active');p.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+  sel.value=idx;
+  document.getElementById('main').innerHTML=`
+    <div class="room-card">
+      <div class="room-header">
+        <div class="room-icon">${s.nom.charAt(0)}</div>
+        <div><div class="room-name">${s.nom}</div><div class="room-meta">${s.etage} · Métamorphose, Angers</div></div>
+        <div class="room-tags"><span class="tag meta">Métamorphose</span><span class="tag cap">⬩ ${s.cap}</span></div>
+      </div>
+      <iframe src="${s.url}" title="Calendrier ${s.nom}" loading="lazy"></iframe>
+      <div class="iframe-footer">
+        <span>${s.email}</span>
+        <a class="btn-reserve" href="https://outlook.office.com/calendar/action/compose?to=${s.email}&subject=Réservation — ${s.nom}" target="_blank">+ Réserver</a>
+      </div>
+    </div>`;
+}
+window.selectRoom=selectRoom;
+</script>
+</body>
+</html>
