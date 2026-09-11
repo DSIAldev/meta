@@ -1,160 +1,126 @@
-# Generate-DataAldev.ps1
-# Runbook Azure Automation (compte aa-aldev-metriques-stockage) - genere data-aldev.json
-# pour META-FLASH/META-NOW/META-TOUT (salles Aldev + bureaux flex b01-b12).
-#
-# PREREQUIS (a valider avant le 1er run reel) :
-#   1. Permission Graph Application "Calendars.Read" accordee a l'identite managee
-#      + Application Access Policy scopee a un groupe de securite mail-enabled
-#        contenant les salles Aldev ET b01@..b12@angers-developpement.com
-#        (ne PAS utiliser Calendars.Read.All non scope sur tout le tenant)
-#   2. PAT GitHub (scope repo, idealement fine-grained limite a DSIAldev/meta)
-#      stocke en Automation Variable chiffree "GitHubPAT_MetaRepo"
-#   3. Confirmer que b01-b12 sont bien des boites "Room" (pas "Equipment") -
-#      sinon /places ne les remonte pas, voir bloc alternatif plus bas
-#
-# Reprend les acquis GAL-sync : [ordered]@{} partout, @() wrapping des collections,
-# Invoke-MgGraphRequest plutot que les cmdlets typees (contournement OutOfMemory/
-# reflection deja rencontre sur Sites/Contacts), jamais de Connect-MgGraph avec
-# scopes custom dans un runbook (ici Identity uniquement, pas de conflit).
-
-$dryRun = $true   # ne pousse rien sur GitHub tant que $true - inspecte $json d'abord
-
-Connect-MgGraph -Identity
-
-# --- 1. Liste des ressources (salles + bureaux), en dur -------------------
-# Pas de requete dynamique (/places) : liste figee, a tenir a jour ici a la main
-# quand une salle/un bureau est ajoute ou renomme.
-
-# Note : pas de b04 (mailbox inexistante). Toutes les adresses uniformisees en bXX@ (primaire).
-$bureaux = @(
-    [ordered]@{ displayName = 'Bureau 01'; emailAddress = 'b01@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 02'; emailAddress = 'b02@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 03'; emailAddress = 'b03@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 05'; emailAddress = 'b05@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 06'; emailAddress = 'b06@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 07'; emailAddress = 'b07@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 08'; emailAddress = 'b08@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 09'; emailAddress = 'b09@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 10'; emailAddress = 'b10@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 11'; emailAddress = 'b11@angers-developpement.com'; etage = $null }
-    [ordered]@{ displayName = 'Bureau 12'; emailAddress = 'b12@angers-developpement.com'; etage = $null }
-)
-
-$salles = @(
-    # Le Cube 4 retire de la liste : salle fermee actuellement
-    # Ordre : capacite decroissante (source liste ressources Outlook), puis alpha a egalite
-    [ordered]@{ displayName = 'Scania';           emailAddress = 'scania@angers-developpement.com';        etage = $null }   # 12
-    [ordered]@{ displayName = 'Bull';             emailAddress = 'bull@angers-developpement.com';          etage = $null }   # 10
-    [ordered]@{ displayName = 'Le Cube 7';        emailAddress = 'lecube7@angers-developpement.com';       etage = $null }   # 7
-    [ordered]@{ displayName = 'Le Cube 6';        emailAddress = 'lecube6@angers-developpement.com';       etage = $null }   # 6
-    [ordered]@{ displayName = 'Bessonneau';       emailAddress = 'bessonneau@angers-developpement.com';    etage = $null }   # 4
-    [ordered]@{ displayName = 'Bouvet';           emailAddress = 'bouvet@angers-developpement.com';        etage = $null }   # 4
-    [ordered]@{ displayName = 'Ardoisières';      emailAddress = 'ardoisieres@angers-developpement.com';   etage = $null }   # 3
-    [ordered]@{ displayName = 'Courant';          emailAddress = 'courant@angers-developpement.com';       etage = $null }   # 3
-)
-
-$resources = @($salles) + @($bureaux)
-
-# --- 2. Fenetre de recherche -------------------------------------------------
-
-$now = Get-Date
-$fin = $now.AddDays(60)   # marge > 31j utilises par le front
-
-$headers = @{ Prefer = 'outlook.timezone="UTC"' }  # evite tout calcul de decalage manuel
-
-# Invoke-MgGraphRequest deserialise parfois start.dateTime / end.dateTime en [datetime]
-# .NET (au lieu de laisser la string ISO brute) -> "$dt + 'Z'" tente alors un op_Addition
-# DateTime+TimeSpan et casse sur la conversion de 'Z'. On normalise donc dans les deux cas.
-function ConvertTo-IsoZ {
-    param($value)
-    if ($null -eq $value) { return $null }
-    if ($value -is [datetime]) {
-        return $value.ToString('yyyy-MM-ddTHH:mm:ss') + 'Z'
-    }
-    return [string]$value + 'Z'
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
+<title>MÉTA-ALDEV</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#f4f2ee;--surface:#ffffff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-secondary:#6b6860;--text-muted:#a09d98;
+    --accent:#2d3546;--busy:#c84b2f;--free:#2e7d5e;--free-light:#eaf4ef;
+    --aldev:#ec2e4a;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;line-height:1.4;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .subtitle{font-size:12px;color:var(--text-muted);font-weight:400;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .main{padding:16px 24px 24px;}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  table{width:100%;border-collapse:collapse;}
+  thead tr{background:#f9f8f6;border-bottom:2px solid var(--border);}
+  thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;}
+  thead th.ch{background:#f0f4f8;border-left:1px solid var(--border);color:var(--accent);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:#fafaf8;}
+  td{padding:10px 12px;vertical-align:top;}
+  td.sc{font-weight:600;font-size:13px;color:var(--text-primary);white-space:nowrap;width:110px;}
+  td.cc{border-left:1px solid var(--border);}
+  .slot-line{font-size:12px;color:var(--text-primary);display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;}
+  .slot-line::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--busy);flex-shrink:0;}
+  .slot-when{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);white-space:nowrap;}
+  .slot-title{font-weight:500;color:var(--text-primary);}
+  .slot-empty{font-size:11px;color:var(--text-muted);font-style:italic;}
+  .error-msg{padding:40px;text-align:center;color:var(--text-muted);font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:36px;display:block;">
+    <div class="subtitle">CRÉNEAU EN COURS &amp; SUIVANT · AUJOURD'HUI · SALLES &amp; BUREAUX ALDEV</div>
+  </div>
+  <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">MÉTA-ALDEV</span>
+  <div class="header-right">
+    <div class="update-time">Mis à jour : <span id="updated">—</span> &nbsp;·&nbsp; par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
+  </div>
+</header>
+<div class="main">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Salle / Bureau</th>
+          <th class="ch">En cours</th>
+          <th class="ch">Suivant</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="3" class="error-msg">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+function fmtHM(iso) {
+  return new Date(iso).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
 }
 
-# --- 3. Calendrier par ressource --------------------------------------------
-
-$salles = foreach ($r in @($resources)) {
-    $mail = $r.emailAddress
-    if (-not $mail) { continue }
-
-    $start = $now.ToString('yyyy-MM-ddTHH:mm:ss')
-    $end   = $fin.ToString('yyyy-MM-ddTHH:mm:ss')
-    $uri = "https://graph.microsoft.com/v1.0/users/$mail/calendarView?startDateTime=$start&endDateTime=$end&`$top=250&`$select=subject,start,end,isAllDay,organizer"
-
-    try {
-        $events = Invoke-MgGraphRequest -Method GET -Uri $uri -Headers $headers
-
-        # --- DEBUG : ce que Graph renvoie reellement, avant toute transformation ---
-        Write-Output "DEBUG [$mail] uri=$uri"
-        Write-Output "DEBUG [$mail] type brut=$($events.GetType().FullName)"
-        Write-Output "DEBUG [$mail] cles racine=$(($events.Keys) -join ', ')"
-        Write-Output "DEBUG [$mail] '@odata.count'=$($events.'@odata.count') '@odata.nextLink' presente=$([bool]$events.'@odata.nextLink')"
-        Write-Output "DEBUG [$mail] value existe=$([bool]($events.ContainsKey('value'))) valueCount=$(@($events.value).Count)"
-        if (@($events.value).Count -gt 0) {
-            Write-Output "DEBUG [$mail] 1er evenement brut (non transforme) = $($events.value[0] | ConvertTo-Json -Depth 6 -Compress)"
-        } else {
-            Write-Output "DEBUG [$mail] reponse complete (value vide) = $($events | ConvertTo-Json -Depth 6 -Compress)"
-        }
-        # --- fin DEBUG ---
-
-        $creneaux = @(foreach ($e in @($events.value)) {
-            [ordered]@{
-                start     = ConvertTo-IsoZ $e.start.dateTime   # deja UTC grace au Prefer header
-                end       = ConvertTo-IsoZ $e.end.dateTime
-                subject   = $e.subject
-                organizer = $e.organizer.emailAddress.address
-                isallday  = [bool]$e.isAllDay
-            }
-        })
-        Write-Output "DEBUG [$mail] creneaux transformes=$($creneaux.Count)"
-    }
-    catch {
-        Write-Warning "Echec calendrier pour $mail : $($_.Exception.Message)"
-        if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
-            Write-Warning "DEBUG [$mail] corps reponse erreur : $($_.ErrorDetails.Message)"
-        }
-        $creneaux = @()
-    }
-
-    [ordered]@{
-        nom      = $r.displayName
-        etage    = $r.etage   # renseigne a la main dans les listes en dur ci-dessus si besoin
-        'créneaux' = $creneaux
-    }
+function slotHTML(slot) {
+  if (!slot) return '<div class="slot-empty">Libre</div>';
+  return `<div class="slot-line">
+    <span class="slot-when">${fmtHM(slot.start)}–${fmtHM(slot.end)}</span>
+    <span class="slot-title">${slot.subject || '—'}</span>
+  </div>`;
 }
 
-$data = [ordered]@{
-    updated = (Get-Date).ToString('dd/MM/yyyy HH:mm')
-    salles  = @($salles)
-}
-$json = $data | ConvertTo-Json -Depth 6 -Compress
-
-if ($dryRun) {
-    Write-Output $json
-    return
+function isSameDay(a, b) {
+  return a.getFullYear() === b.getFullYear()
+      && a.getMonth() === b.getMonth()
+      && a.getDate() === b.getDate();
 }
 
-# --- 4. Commit sur GitHub (repo DSIAldev/meta) ------------------------------
+function buildTable(data) {
+  document.getElementById('updated').textContent = data.updated || '—';
+  const tbody = document.getElementById('tbody');
+  const now = new Date();
 
-$pat   = Get-AutomationVariable -Name 'GitHubPAT_MetaRepo'
-$owner = 'DSIAldev'; $repo = 'meta'; $path = 'data-aldev.json'
-$ghHeaders = @{ Authorization = "token $pat"; 'User-Agent' = 'aldev-automation' }
+  let html = '';
+  for (const salle of data.salles) {
+    const creneaux = (salle.créneaux || [])
+      .map(c => ({ ...c, _start: new Date(c.start), _end: new Date(c.end) }))
+      .sort((a, b) => a._start - b._start);
 
-$existing = $null
-try {
-    $existing = Invoke-RestMethod -Method GET -Headers $ghHeaders `
-        -Uri "https://api.github.com/repos/$owner/$repo/contents/$path"
-} catch { }  # 404 si le fichier n'existe pas encore -> creation simple
+    // Créneau en cours : a deja commence, pas encore fini (peu importe le jour de debut,
+    // pour couvrir un evenement a cheval sur minuit).
+    const enCours = creneaux.find(c => c._start <= now && c._end > now);
 
-$payload = [ordered]@{
-    message = "Update data-aldev.json - $(Get-Date -Format s)"
-    content = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+    // Créneau suivant : le premier a venir aujourd'hui (meme jour calendaire que maintenant).
+    const suivant = creneaux.find(c => c._start > now && isSameDay(c._start, now));
+
+    html += `<tr>
+      <td class="sc">${salle.nom}</td>
+      <td class="cc">${slotHTML(enCours)}</td>
+      <td class="cc">${slotHTML(suivant)}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
 }
-if ($existing) { $payload.sha = $existing.sha }
 
-Invoke-RestMethod -Method PUT -Headers $ghHeaders -ContentType 'application/json' `
-    -Uri "https://api.github.com/repos/$owner/$repo/contents/$path" `
-    -Body ($payload | ConvertTo-Json)
+fetch('data-aldev.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('data-aldev.json introuvable'); return r.json(); })
+  .then(buildTable)
+  .catch(err => {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="3" class="error-msg">${err.message}</td></tr>`;
+  });
+</script>
+</body>
+</html>
