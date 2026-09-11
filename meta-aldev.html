@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
+<title>MÉTA-ALDEV</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#f4f2ee;--surface:#ffffff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-secondary:#6b6860;--text-muted:#a09d98;
+    --accent:#2d3546;--busy:#c84b2f;--free:#2e7d5e;--free-light:#eaf4ef;
+    --aldev:#ec2e4a;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;line-height:1.4;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .subtitle{font-size:12px;color:var(--text-muted);font-weight:400;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .main{padding:16px 24px 24px;}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  table{width:100%;border-collapse:collapse;}
+  thead tr{background:#f9f8f6;border-bottom:2px solid var(--border);}
+  thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;}
+  thead th.ch{background:#f0f4f8;border-left:1px solid var(--border);color:var(--accent);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:#fafaf8;}
+  td{padding:10px 12px;vertical-align:top;}
+  td.sc{font-weight:600;font-size:13px;color:var(--text-primary);white-space:nowrap;width:110px;}
+  td.cc{border-left:1px solid var(--border);}
+  .slot-line{font-size:12px;color:var(--text-primary);display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;}
+  .slot-line::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--busy);flex-shrink:0;}
+  .slot-when{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);white-space:nowrap;}
+  .slot-title{font-weight:500;color:var(--text-primary);}
+  .slot-empty{font-size:11px;color:var(--text-muted);font-style:italic;}
+  .error-msg{padding:40px;text-align:center;color:var(--text-muted);font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:36px;display:block;">
+    <div class="subtitle">2 PROCHAINS CRÉNEAUX OCCUPÉS · SALLES &amp; BUREAUX ALDEV</div>
+  </div>
+  <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">MÉTA-ALDEV</span>
+  <div class="header-right">
+    <div class="update-time">Mis à jour : <span id="updated">—</span> &nbsp;·&nbsp; par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
+  </div>
+</header>
+<div class="main">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Salle / Bureau</th>
+          <th class="ch">Créneau 1</th>
+          <th class="ch">Créneau 2</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="3" class="error-msg">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+function fmtSlot(iso) {
+  const d = new Date(iso);
+  return {
+    day: d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' }),
+    h:   d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })
+  };
+}
+
+function slotHTML(slot) {
+  if (!slot) return '<div class="slot-empty">Libre</div>';
+  const s = fmtSlot(slot.start);
+  const e = fmtSlot(slot.end);
+  return `<div class="slot-line">
+    <span class="slot-when">${s.day} ${s.h}–${e.h}</span>
+    <span class="slot-title">${slot.subject || '—'}</span>
+  </div>`;
+}
+
+function buildTable(data) {
+  document.getElementById('updated').textContent = data.updated || '—';
+  const tbody = document.getElementById('tbody');
+  const now = new Date();
+
+  let html = '';
+  for (const salle of data.salles) {
+    const futurs = (salle.créneaux || [])
+      .filter(c => new Date(c.end) > now)
+      .sort((a,b) => new Date(a.start)-new Date(b.start));
+    html += `<tr>
+      <td class="sc">${salle.nom}</td>
+      <td class="cc">${slotHTML(futurs[0])}</td>
+      <td class="cc">${slotHTML(futurs[1])}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+fetch('data-aldev.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('data-aldev.json introuvable'); return r.json(); })
+  .then(buildTable)
+  .catch(err => {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="3" class="error-msg">${err.message}</td></tr>`;
+  });
+</script>
+</body>
+</html>
