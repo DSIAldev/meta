@@ -10,249 +10,341 @@
   :root {
     --bg:#f4f2ee;--surface:#ffffff;--border:#e2dfd8;
     --text-primary:#1a1916;--text-secondary:#6b6860;--text-muted:#a09d98;
-    --accent:#2d3546;--busy:#c84b2f;--free:#2e7d5e;--free-light:#eaf4ef;
+    --accent:#2d3546;--busy:#c84b2f;--free:#2e7d5e;--free-bg:#eaf4ef;
     --aldev:#ec2e4a;--aldev-light:#fdeef1;
     --technopole:#0f1f3d;--technopole-light:#e8eaf0;
     --cci:#373cf5;--cci-light:#eeeffe;
     --other:#4a6741;--other-light:#edf3ec;
+    --warn:#b7791f;--warn-bg:#fdf4e3;
     --radius:6px;--shadow:0 1px 3px rgba(0,0,0,0.06);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;line-height:1.4;min-height:100vh;}
-  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .header-left{display:flex;align-items:center;gap:12px;}
-  .subtitle{font-size:12px;color:var(--text-muted);font-weight:400;}
-  .header-right{display:flex;align-items:center;gap:16px;}
+  .subtitle{font-size:12px;color:var(--text-muted);}
+  .header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
   .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
-  .legend{display:flex;gap:10px;align-items:center;}
+  .legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);}
-  .legend-dot{width:8px;height:8px;border-radius:50%;}
-  .main{padding:16px 24px 24px;}
-  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
-  table{width:100%;border-collapse:collapse;}
-  thead tr{background:#f9f8f6;border-bottom:2px solid var(--border);}
-  thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;}
-  thead th.ch{background:#f0f4f8;border-left:1px solid var(--border);color:var(--accent);}
-  thead th.lh{background:#f0f8f4;border-left:2px solid var(--border);color:var(--free);}
-  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
-  tbody tr:last-child{border-bottom:none;}
-  tbody tr:hover{background:#fafaf8;}
-  tbody tr.fs td{background:#f9f8f6;padding:4px 12px;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);}
-  td{padding:10px 12px;vertical-align:top;}
-  td.sc{font-weight:600;font-size:13px;color:var(--text-primary);white-space:nowrap;width:100px;}
-  td.cc{border-left:1px solid var(--border);width:200px;}
-  td.lc{border-left:2px solid var(--border);width:130px;}
-  .slot{display:flex;flex-direction:column;gap:3px;}
-  .slot-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);display:flex;align-items:center;gap:5px;}
-  .slot-time::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--busy);flex-shrink:0;}
-  .slot-title{font-size:12px;font-weight:500;color:var(--text-primary);line-height:1.3;}
-  .slot-org{display:inline-block;font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;margin-top:2px;}
-  .org-aldev{background:var(--aldev-light);color:var(--aldev);}
-  .org-technopole{background:var(--technopole-light);color:var(--technopole);}
-  .org-cci{background:var(--cci-light);color:var(--cci);}
-  .org-other{background:var(--other-light);color:var(--other);}
-  .slot-empty{font-size:11px;color:var(--text-muted);font-style:italic;}
-  .free-slot{display:flex;flex-direction:column;gap:2px;}
-  .free-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--free);font-weight:500;}
-  .free-time{font-size:11px;color:var(--text-secondary);}
-  .free-now{font-size:11px;font-weight:600;color:var(--free);background:var(--free-light);padding:2px 7px;border-radius:3px;display:inline-block;}
-  .error-msg{padding:40px;text-align:center;color:var(--text-muted);font-size:13px;}
+  .legend-dot{width:10px;height:10px;border-radius:2px;}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px 8px;flex-wrap:wrap;}
+  .day-title{font-size:18px;font-weight:600;text-transform:capitalize;}
+  .day-tabs{display:flex;gap:4px;}
+  .day-tab{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;}
+  .day-tab:hover{border-color:var(--accent);color:var(--text-primary);}
+  .day-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .stale{font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-bg);padding:3px 8px;border-radius:3px;}
+
+  .main{padding:8px 24px 32px;}
+  .board{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .row{display:grid;grid-template-columns:130px 200px 1fr;gap:0;border-bottom:1px solid var(--border);}
+  .row:last-child{border-bottom:none;}
+  .row > div{padding:10px 12px;}
+  .row .c-tl{border-left:1px solid var(--border);}
+  .row .c-st{border-left:1px solid var(--border);}
+  .row.head{background:#f9f8f6;border-bottom:2px solid var(--border);}
+  .row.head > div{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;}
+  .floor{background:#f9f8f6;padding:4px 12px;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+
+  .room-name{font-weight:600;font-size:13px;}
+  .room-cap{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);}
+
+  .status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:3px;}
+  .status::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .st-busy{color:var(--busy);background:#fbece8;}
+  .st-free{color:var(--free);background:var(--free-bg);}
+  .st-off{color:var(--text-muted);background:#f1efeb;}
+  .status-sub{font-size:11px;color:var(--text-secondary);margin-top:4px;line-height:1.3;}
+
+  /* Frise */
+  .ticks{position:relative;height:14px;}
+  .tick{position:absolute;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);}
+  .tl{position:relative;height:30px;background:#fafaf8;border:1px solid var(--border);border-radius:4px;}
+  .hl{position:absolute;top:0;bottom:0;width:1px;background:#ece9e3;}
+  .hl.noon{background:#d4cfc8;}
+  .past{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(0,0,0,.035) 0 4px,transparent 4px 8px);pointer-events:none;}
+  .gap{position:absolute;top:3px;bottom:3px;background:var(--free-bg);border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--free);font-size:11px;font-weight:600;opacity:.75;}
+  .gap span{opacity:0;transition:opacity .15s;}
+  .gap:hover{background:#d0ece1;opacity:1;}
+  .gap:hover span{opacity:1;}
+  .blk{position:absolute;top:3px;bottom:3px;border-radius:3px;color:#fff;font-size:10px;font-weight:500;padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:flex;align-items:center;}
+  .blk.org-aldev{background:var(--aldev);}
+  .blk.org-technopole{background:var(--technopole);}
+  .blk.org-cci{background:var(--cci);}
+  .blk.org-other{background:var(--other);}
+  .nowline{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--aldev);border-radius:1px;pointer-events:none;}
+  .nowline::before{content:'';position:absolute;top:-3px;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--aldev);}
+
+  .evts{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;}
+  .evt{font-size:11px;color:var(--text-secondary);}
+  .evt b{font-family:'DM Mono',monospace;font-weight:500;color:var(--text-primary);}
+  .evt .org{display:inline-block;font-size:10px;font-weight:500;padding:0 5px;border-radius:3px;margin-left:3px;}
+  .org.org-aldev{background:var(--aldev-light);color:var(--aldev);}
+  .org.org-technopole{background:var(--technopole-light);color:var(--technopole);}
+  .org.org-cci{background:var(--cci-light);color:var(--cci);}
+  .org.org-other{background:var(--other-light);color:var(--other);}
+  .evt.done{opacity:.5;}
+
+  .msg{padding:40px;text-align:center;color:var(--text-muted);}
+
+  @media(max-width:760px){
+    header,.toolbar,.main{padding-left:12px;padding-right:12px;}
+    .row{grid-template-columns:1fr auto;}
+    .row .c-st{border-left:none;text-align:right;}
+    .row .c-tl{grid-column:1 / -1;border-left:none;padding-top:0;}
+    .row.head{display:none;}
+    .tick.odd{display:none;}
+  }
 </style>
 </head>
 <body>
 <header>
   <div class="header-left">
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:36px;display:block;">
-    <div class="subtitle">Créneaux du jour</div>
+    <div class="subtitle">Occupation du jour</div>
   </div>
   <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">MÉTA-TODAY</span>
   <div class="header-right">
     <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--free-bg);border:1px solid var(--free);"></div>Libre — cliquer pour réserver</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--technopole)"></div>Technopôle</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
     </div>
-    <div class="update-time">Mis à jour : <span id="updated">—</span> &nbsp;·&nbsp; par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
+    <div class="update-time">Mis à jour : <span id="updated">—</span> · par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
   </div>
 </header>
-<div class="main">
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Salle</th>
-          <th class="ch">Créneau 1</th>
-          <th class="ch">Créneau 2</th>
-          <th class="lh">Prochain libre</th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-        <tr><td colspan="4" class="error-msg">Chargement…</td></tr>
-      </tbody>
-    </table>
+
+<div class="toolbar">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div class="day-title" id="dayTitle">—</div>
+    <span class="stale" id="stale" style="display:none"></span>
+  </div>
+  <div class="day-tabs">
+    <button class="day-tab" id="tab0">Aujourd'hui</button>
+    <button class="day-tab" id="tab1">Jour suivant</button>
   </div>
 </div>
+
+<div class="main">
+  <div class="board" id="board"><div class="msg">Chargement…</div></div>
+</div>
+
 <script>
+// Salles affichées (1er + 7e étage Métamorphose). Confluences retirée (fermée).
+const SALLES = [
+  {nom:'Auditorium', etage:'1er étage', cap:'200p', email:'auditorium@la-fabrique-angers.fr'},
+  {nom:'Le Club',    etage:'1er étage', cap:'20p',  email:'leclub@la-fabrique-angers.fr'},
+  {nom:'Aubance',    etage:'7e étage',  cap:'4p',   email:'aubance@la-fabrique-angers.fr'},
+  {nom:'Authion',    etage:'7e étage',  cap:'10p',  email:'authion@la-fabrique-angers.fr'},
+  {nom:'Layon',      etage:'7e étage',  cap:'4p',   email:'layon@la-fabrique-angers.fr'},
+  {nom:'Loire',      etage:'7e étage',  cap:'19p',  email:'loire@la-fabrique-angers.fr'},
+  {nom:'Louet',      etage:'7e étage',  cap:'4p',   email:'louet@la-fabrique-angers.fr'},
+  {nom:'Maine',      etage:'7e étage',  cap:'18p',  email:'maine@la-fabrique-angers.fr'},
+  {nom:'Mayenne',    etage:'7e étage',  cap:'13p',  email:'mayenne@la-fabrique-angers.fr'},
+  {nom:'Oudon',      etage:'7e étage',  cap:'8p',   email:'oudon@la-fabrique-angers.fr'},
+  {nom:'Sarthe',     etage:'7e étage',  cap:'15p',  email:'sarthe@la-fabrique-angers.fr'},
+];
+
+const H0 = 8*60, H1 = 19*60, SPAN = H1 - H0;   // frise 08:00–19:00
+const MIN_GAP = 30;                              // plage libre cliquable mini (min)
+const STALE_AFTER = 60;                          // alerte si data.json > 60 min
+
 const ORGS = {
-  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev' },
-  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole' },
-  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci' }
+  'angers-developpement.com': { label:'Aldev',      css:'org-aldev' },
+  'angerstechnopole.com':     { label:'Technopôle', css:'org-technopole' },
+  'maineetloire.cci.fr':      { label:'CCI',        css:'org-cci' }
 };
-
 function getOrg(email) {
-  if (!email) return { label: '—', css: 'org-other' };
-  const domain = (email.split('@')[1] || '').toLowerCase();
-  return ORGS[domain] || { label: domain, css: 'org-other' };
+  if (!email) return { label:'—', css:'org-other' };
+  const d = (email.split('@')[1] || '').toLowerCase();
+  return ORGS[d] || { label:d, css:'org-other' };
 }
 
-function fmtSlot(iso) {
-  const d = new Date(iso);
-  return {
-    day: d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' }),
-    h:   d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })
-  };
+const pct = m => ((m - H0) / SPAN * 100).toFixed(3) + '%';
+const hm  = m => { m = Math.round(m); return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'); };
+const minsOf = d => d.getHours()*60 + d.getMinutes();
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isWeekend = d => d.getDay() === 0 || d.getDay() === 6;
+
+// Bornes réelles d'un événement. Les "journée entière" arrivent en minuit UTC :
+// on prend la date (YYYY-MM-DD) et on la place à minuit local.
+function localMidnight(iso) { const [y,m,d] = iso.slice(0,10).split('-').map(Number); return new Date(y, m-1, d); }
+function spanOf(c) {
+  return c.isallday ? { s: localMidnight(c.start), e: localMidnight(c.end) }
+                    : { s: new Date(c.start),      e: new Date(c.end) };
 }
 
-function slotHTML(slot) {
-  if (!slot) return '<div class="slot-empty">Libre</div>';
-  const s = fmtSlot(slot.start);
-  const e = fmtSlot(slot.end);
-  const org = getOrg(slot.organizer);
-  return `<div class="slot">
-    <div class="slot-time"><span>${s.day}</span><span>${s.h}–${e.h}</span></div>
-    <div class="slot-title">${slot.subject || '—'}</div>
-    <span class="slot-org ${org.css}">${org.label}</span>
-  </div>`;
+// Événements qui touchent le jour donné, bornés à ce jour (minutes 0–1440, sûr au changement d'heure)
+function eventsOfDay(creneaux, day) {
+  const d0 = new Date(day); d0.setHours(0,0,0,0);
+  const d1 = new Date(d0);  d1.setDate(d1.getDate()+1);
+  return (creneaux || [])
+    .map(c => ({ c, ...spanOf(c) }))
+    .filter(x => x.s < d1 && x.e > d0)
+    .map(x => ({ s: x.s <= d0 ? 0 : minsOf(x.s), e: x.e >= d1 ? 1440 : minsOf(x.e), c: x.c }))
+    .sort((a,b) => a.s - b.s);
 }
 
-function nextFreeSlot(allCreneaux, refDate) {
-  // Plages horaires candidates (minutes depuis minuit)
-  const WINDOWS = [
-    { start: 9*60, end: 12*60 },   // 09:00–12:00
-    { start: 14*60, end: 18*60 }   // 14:00–18:00
-  ];
-  const MIN_DURATION = 2 * 60; // 2h en minutes
-
-  // Premier jour ouvré à partir de refDate (exclu)
-  function nextWorkday(d) {
-    const nd = new Date(d);
-    nd.setHours(0, 0, 0, 0);
-    nd.setDate(nd.getDate() + 1);
-    while (nd.getDay() === 0 || nd.getDay() === 6) nd.setDate(nd.getDate() + 1);
-    return nd;
+// Plages libres dans [from, H1]
+function freeGaps(evts, from) {
+  const gaps = []; let cur = from;
+  for (const ev of evts) {
+    if (ev.e <= cur) continue;
+    if (ev.s >= H1) break;
+    if (ev.s - cur >= MIN_GAP) gaps.push({ s: cur, e: Math.min(ev.s, H1) });
+    cur = Math.max(cur, ev.e);
   }
+  if (H1 - cur >= MIN_GAP) gaps.push({ s: cur, e: H1 });
+  return gaps;
+}
 
-  // Retourne les minutes depuis minuit pour une Date
-  function minsOf(d) { return d.getHours() * 60 + d.getMinutes(); }
-
-  // Pour un jour donné (Date à minuit), les créneaux qui s'y chevauchent (en minutes)
-  function busyMins(day, creneaux) {
-    const dayStart = day.getTime();
-    const dayEnd   = dayStart + 24*3600*1000;
-    return creneaux
-      .filter(c => new Date(c.start).getTime() < dayEnd && new Date(c.end).getTime() > dayStart)
-      .map(c => ({
-        s: Math.max(minsOf(new Date(c.start)), 0),
-        e: Math.min(minsOf(new Date(c.end)), 24*60)
-      }))
-      .sort((a, b) => a.s - b.s);
+function statusHTML(evts, isToday, nowM) {
+  if (!isToday) {
+    const n = evts.length;
+    return n === 0
+      ? '<span class="status st-free">Libre toute la journée</span>'
+      : `<span class="status st-busy">${n} réservation${n>1?'s':''}</span>`;
   }
+  if (nowM >= H1) return '<span class="status st-off">Journée terminée</span>';
+  const cur = evts.find(ev => ev.s <= nowM && ev.e > nowM);
+  if (cur) {
+    // Enchaîne les réunions contiguës pour l'heure de libération réelle
+    let end = cur.e;
+    for (const ev of evts) if (ev.s <= end && ev.e > end) end = ev.e;
+    const org = getOrg(cur.c.organizer);
+    return `<span class="status st-busy">Occupée jusqu'à ${end >= 1440 ? 'ce soir' : hm(end)}</span>
+            <div class="status-sub">${esc(cur.c.subject || '—')} · ${esc(org.label)}</div>`;
+  }
+  const next = evts.find(ev => ev.s > nowM);
+  if (!next || next.s >= H1) return '<span class="status st-free">Libre jusqu\'au soir</span>';
+  return `<span class="status st-free">Libre jusqu'à ${hm(next.s)}</span>
+          <div class="status-sub">puis ${esc(next.c.subject || '—')}</div>`;
+}
 
-  // Dans une fenêtre [winStart, winEnd], cherche la première sous-plage libre ≥ MIN_DURATION
-  // en tenant compte des blocs occupés
-  function firstFreeIn(winStart, winEnd, busy) {
-    let cursor = winStart;
-    for (const blk of busy) {
-      if (blk.s >= winEnd) break;          // bloc après la fenêtre
-      if (blk.e <= winStart) continue;     // bloc avant la fenêtre
-      const freeEnd = Math.min(blk.s, winEnd);
-      if (freeEnd - cursor >= MIN_DURATION) return { s: cursor, e: freeEnd };
-      cursor = Math.max(cursor, blk.e);
+function timelineHTML(evts, isToday, nowM, roomIdx) {
+  let h = '<div class="tl">';
+  for (let t = H0 + 60; t < H1; t += 60) h += `<div class="hl${t===12*60||t===14*60?' noon':''}" style="left:${pct(t)}"></div>`;
+  if (isToday && nowM > H0) h += `<div class="past" style="width:${pct(Math.min(nowM, H1))}"></div>`;
+
+  const from = isToday ? Math.max(H0, Math.ceil(nowM / 15) * 15) : H0;
+  if (from < H1) {
+    for (const g of freeGaps(evts, from)) {
+      h += `<div class="gap" data-r="${roomIdx}" data-s="${g.s}" data-e="${g.e}" style="left:${pct(g.s)};width:${pct(H0 + g.e - g.s)}" title="Libre ${hm(g.s)}–${hm(g.e)} — cliquer pour réserver"><span>+</span></div>`;
     }
-    // Fin de fenêtre après les blocs
-    if (winEnd - cursor >= MIN_DURATION) return { s: cursor, e: winEnd };
-    return null;
   }
-
-  // Recherche sur 60 jours ouvrés max, en démarrant AUJOURD'HUI
-  const now = refDate; // heure courante (pour ignorer les plages déjà passées)
-  const nowMins = minsOf(now); // minutes écoulées depuis minuit aujourd'hui
-
-  // Jour courant (minuit)
-  let day = new Date(now);
-  day.setHours(0, 0, 0, 0);
-  // Si week-end, avancer au prochain lundi
-  while (day.getDay() === 0 || day.getDay() === 6) day.setDate(day.getDate() + 1);
-
-  for (let i = 0; i < 60; i++) {
-    const isToday = (day.toDateString() === now.toDateString());
-    const busy = busyMins(day, allCreneaux);
-
-    for (const win of WINDOWS) {
-      // Pour aujourd'hui : le début effectif de la fenêtre = max(win.start, nowMins)
-      // On garde winStart tel quel pour firstFreeIn, mais on ajuste le cursor initial
-      const effectiveWinStart = isToday ? Math.max(win.start, nowMins) : win.start;
-      // Si la fenêtre est déjà entièrement passée aujourd'hui, skip
-      if (win.end - effectiveWinStart < MIN_DURATION) continue;
-
-      const free = firstFreeIn(effectiveWinStart, win.end, busy);
-      if (free) {
-        const isNow = isToday;
-        const label = isNow
-          ? "Aujourd'hui"
-          : day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
-        const hStart = String(Math.floor(free.s / 60)).padStart(2,'0') + ':' + String(free.s % 60).padStart(2,'0');
-        const hEnd   = String(Math.floor(free.e / 60)).padStart(2,'0') + ':' + String(free.e % 60).padStart(2,'0');
-        return `<div class="free-slot"><div class="free-label">${label}</div><div class="free-time">${hStart}–${hEnd}</div></div>`;
-      }
-    }
-    // Jour ouvré suivant
-    day.setDate(day.getDate() + 1);
-    while (day.getDay() === 0 || day.getDay() === 6) day.setDate(day.getDate() + 1);
+  for (const ev of evts) {
+    const s = Math.max(ev.s, H0), e = Math.min(ev.e, H1);
+    if (e <= s) continue;
+    const org = getOrg(ev.c.organizer);
+    const tip = `${ev.c.isallday ? 'Journée' : hm(ev.s)+'–'+hm(ev.e)} · ${ev.c.subject || '—'} (${ev.c.organizer || '?'})`;
+    h += `<div class="blk ${org.css}" style="left:${pct(s)};width:${pct(H0 + e - s)}" title="${esc(tip)}">${esc(org.label)}</div>`;
   }
-  return '<div class="free-now">Aucun créneau libre trouvé</div>';
+  if (isToday && nowM >= H0 && nowM <= H1) h += `<div class="nowline" style="left:${pct(nowM)}"></div>`;
+  return h + '</div>';
 }
 
-function buildTable(data) {
-  document.getElementById('updated').textContent = data.updated || '—';
-  const tbody = document.getElementById('tbody');
+function evtsListHTML(evts, isToday, nowM) {
+  if (!evts.length) return '';
+  return '<div class="evts">' + evts.map(ev => {
+    const org = getOrg(ev.c.organizer);
+    const when = ev.c.isallday || (ev.s === 0 && ev.e === 1440) ? 'Journée' : `${hm(ev.s)}–${hm(ev.e)}`;
+    const done = isToday && ev.e <= nowM ? ' done' : '';
+    return `<span class="evt${done}"><b>${when}</b> ${esc(ev.c.subject || '—')}<span class="org ${org.css}">${esc(org.label)}</span></span>`;
+  }).join('') + '</div>';
+}
 
-  // Référence temporelle = date de mise à jour du JSON (format "26/05/2026 15:00")
-  let refDate = new Date();
-  if (data.updated) {
-    const m = data.updated.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
-    if (m) refDate = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]);
+let DATA = null;
+let viewOffset = null; // 0 = aujourd'hui, 1 = jour ouvré suivant
+
+function nextWorkday(d) { const n = new Date(d); n.setHours(0,0,0,0); do { n.setDate(n.getDate()+1); } while (isWeekend(n)); return n; }
+function viewDay() { const t = new Date(); t.setHours(0,0,0,0); return viewOffset === 1 ? nextWorkday(t) : t; }
+
+function render() {
+  if (!DATA) return;
+  const now = new Date(), nowM = minsOf(now);
+  const day = viewDay();
+  const isToday = viewOffset === 0;
+
+  // Onglets
+  document.getElementById('tab0').classList.toggle('active', isToday);
+  document.getElementById('tab1').classList.toggle('active', !isToday);
+  document.getElementById('tab1').textContent = nextWorkday(now).toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'2-digit' });
+  document.getElementById('dayTitle').textContent =
+    day.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' }) + (isToday && isWeekend(day) ? ' · week-end' : '');
+
+  // Fraîcheur des données
+  const stale = document.getElementById('stale');
+  const m = (DATA.updated || '').match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+  if (m) {
+    const upd = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]);
+    const age = (now - upd) / 60000;
+    stale.style.display = age > STALE_AFTER ? '' : 'none';
+    stale.textContent = `Données datant de ${Math.round(age/60) >= 1 ? Math.round(age/60) + ' h' : Math.round(age) + ' min'}`;
   }
 
-  let html = '';
+  const byName = {};
+  (DATA.salles || []).forEach(s => byName[s.nom] = s.créneaux || []);
+
+  let ticks = '<div class="ticks">';
+  for (let t = H0; t <= H1; t += 60) ticks += `<span class="tick${(t/60)%2 ? ' odd' : ''}" style="left:${pct(t)}">${t/60}h</span>`;
+  ticks += '</div>';
+
+  let html = `<div class="row head"><div>Salle</div><div class="c-st">${isToday ? 'Maintenant' : 'Synthèse'}</div><div class="c-tl">${ticks}</div></div>`;
   let lastEtage = null;
-  for (const salle of data.salles) {
-    if (salle.etage !== lastEtage) {
-      html += `<tr class="fs"><td colspan="4">${salle.etage}</td></tr>`;
-      lastEtage = salle.etage;
-    }
-    const now = new Date();
-    const futurs = (salle.créneaux || [])
-      .filter(c => new Date(c.end) > now)
-      .sort((a,b) => new Date(a.start)-new Date(b.start));
-    html += `<tr>
-      <td class="sc">${salle.nom}</td>
-      <td class="cc">${slotHTML(futurs[0])}</td>
-      <td class="cc">${slotHTML(futurs[1])}</td>
-      <td class="lc">${nextFreeSlot(salle.créneaux || [], refDate)}</td>
-    </tr>`;
-  }
-  tbody.innerHTML = html;
+  SALLES.forEach((salle, i) => {
+    if (salle.etage !== lastEtage) { html += `<div class="floor">${salle.etage}</div>`; lastEtage = salle.etage; }
+    const evts = eventsOfDay(byName[salle.nom], day);
+    html += `<div class="row">
+      <div><div class="room-name">${salle.nom}</div><div class="room-cap">${salle.cap}</div></div>
+      <div class="c-st">${statusHTML(evts, isToday, nowM)}</div>
+      <div class="c-tl">${timelineHTML(evts, isToday, nowM, i)}${evtsListHTML(evts, isToday, nowM)}</div>
+    </div>`;
+  });
+  document.getElementById('board').innerHTML = html;
 }
+
+// Réservation : compositeur Outlook Web prérempli (même mécanisme que MÉTA-FLASH)
+function reserver(salle, day, sMin, eMin) {
+  const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, sMin);
+  const end   = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, eMin);
+  const p = new URLSearchParams({
+    path:'/calendar/action/compose', rru:'addevent',
+    startdt:start.toISOString(), enddt:end.toISOString(),
+    subject:`Réunion — ${salle.nom}`, location:`${salle.nom} — Métamorphose`, to:salle.email,
+  });
+  window.open('https://outlook.office.com/calendar/deeplink/compose?' + p.toString(), '_blank');
+}
+
+// Clic sur une plage libre : démarre à la demi-heure cliquée, durée 1h (bornée à la plage)
+document.getElementById('board').addEventListener('click', e => {
+  const g = e.target.closest('.gap'); if (!g) return;
+  const s = +g.dataset.s, en = +g.dataset.e;
+  const r = g.getBoundingClientRect();
+  const clicked = s + (e.clientX - r.left) / r.width * (en - s);
+  let start = Math.max(s, Math.floor(clicked / 30) * 30);
+  if (en - start < 30) start = Math.max(s, en - 30);
+  reserver(SALLES[+g.dataset.r], viewDay(), start, Math.min(start + 60, en));
+});
+
+document.getElementById('tab0').onclick = () => { viewOffset = 0; render(); };
+document.getElementById('tab1').onclick = () => { viewOffset = 1; render(); };
 
 fetch('data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('data.json introuvable'); return r.json(); })
-  .then(buildTable)
-  .catch(err => {
-    document.getElementById('tbody').innerHTML =
-      `<tr><td colspan="4" class="error-msg">${err.message}</td></tr>`;
-  });
+  .then(data => {
+    DATA = data;
+    document.getElementById('updated').textContent = data.updated || '—';
+    // Par défaut : jour suivant si journée terminée ou week-end
+    const now = new Date();
+    viewOffset = (minsOf(now) >= H1 || isWeekend(now)) ? 1 : 0;
+    render();
+    setInterval(render, 60000); // trait "maintenant" et statuts à jour chaque minute
+  })
+  .catch(err => { document.getElementById('board').innerHTML = `<div class="msg">${esc(err.message)}</div>`; });
 </script>
 </body>
 </html>
