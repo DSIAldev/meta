@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salles Aldev — Métamorphose</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Page d'accueil interne Aldev (à mettre en favori). index.html reste la page des externes. */
+  :root {
+    --bg:#f4f2ee;--surface:#fff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-muted:#a09d98;--text-secondary:#6b6860;
+    --aldev:#ec2e4a;--accent:#2d3546;--free:#2e7d5e;
+    --radius:6px;--shadow:0 1px 4px rgba(0,0,0,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;min-height:100vh;display:flex;flex-direction:column;}
+  a{color:inherit;}
+  a:focus-visible{outline:3px solid var(--aldev);outline-offset:2px;}
+
+  /* EN-TÊTE */
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .header-left{display:flex;align-items:center;gap:14px;min-width:0;}
+  .header-left img{height:34px;display:block;}
+  .header-left span{font-size:13px;font-weight:500;color:var(--text-secondary);}
+  .header-tag{background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+
+  main{flex:1;width:100%;max-width:880px;margin:0 auto;padding:0 32px 40px;}
+
+  /* NIVEAU 0 · INTRO */
+  .hero{padding:40px 0 28px;}
+  .hero h1{font-size:28px;font-weight:600;line-height:1.2;margin-bottom:10px;}
+  .hero h1 em{font-style:normal;color:var(--aldev);}
+  .hero p{font-size:14px;color:var(--text-secondary);line-height:1.6;max-width:600px;}
+
+  /* NIVEAUX 1 À 3 */
+  .niveau{padding:22px 0 26px;border-top:1px solid var(--border);}
+  .niveau-tete{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+  .niveau-num{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:#fff;background:var(--accent);border-radius:50%;width:24px;height:24px;display:inline-grid;place-items:center;flex:none;transform:translateY(-2px);}
+  .niveau h2{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-primary);}
+  .niveau-tete p{font-size:12px;color:var(--text-muted);margin-left:auto;text-align:right;}
+
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .grid.un{grid-template-columns:minmax(0,1fr);}
+  .grid.trois{grid-template-columns:repeat(3,minmax(0,1fr));}
+  @media(max-width:900px){.grid.trois{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);text-decoration:none;display:flex;flex-direction:column;transition:box-shadow .15s,border-color .15s;}
+  .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#ccc8c0;}
+  .card-top{padding:20px 20px 14px;flex:1;}
+  .card-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-bottom:12px;}
+  .badge-aldev{background:#fdeef1;color:var(--aldev);}
+  .badge-meta{background:#edf3f8;color:#2d5c8a;}
+  .card h3{font-size:15px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .card-icon{font-size:18px;line-height:1;}
+  .card p{font-size:12.5px;color:var(--text-secondary);line-height:1.55;}
+  .card-footer{padding:12px 20px;border-top:1px solid var(--border);background:#fafaf8;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .card-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);}
+  .card-arrow{font-size:16px;color:var(--text-muted);transition:transform .15s;}
+  .card:hover .card-arrow{transform:translateX(3px);color:var(--aldev);}
+
+  /* Niveau 1 : la carte principale ressort */
+  .card.principale{border-left:4px solid var(--aldev);}
+  .card.principale h3{font-size:17px;}
+
+  .liens-sec{margin-top:10px;font-size:12px;color:var(--text-muted);}
+  .liens-sec a{color:var(--text-secondary);}
+
+  footer{text-align:center;padding:20px 32px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);background:var(--surface);line-height:1.7;}
+  footer a{color:var(--text-secondary);}
+
+  @media(max-width:640px){
+    header{padding:12px 16px;}
+    .header-left span{display:none;}
+    main{padding:0 16px 28px;}
+    .hero{padding:26px 0 20px;}
+    .hero h1{font-size:23px;}
+    .grid{grid-template-columns:minmax(0,1fr);gap:12px;}
+    .niveau-tete{flex-wrap:wrap;}
+    .niveau-tete p{margin-left:36px;text-align:left;width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img src="11-meta.jpg" alt="Métamorphose">
+    <span>Réservation des salles</span>
+  </div>
+  <span class="header-tag">Aldev</span>
+</header>
+
+<main>
+
+  <!-- INTRO -->
+  <section class="hero">
+    <h1>Salles <em>Aldev</em> · Métamorphose</h1>
+    <p>Réserver vite, voir ce qui est libre, consulter une salle en détail. Les données sont rafraîchies toutes les 15 minutes ; la réservation se fait dans Outlook.</p>
+  </section>
+
+  <!-- NIVEAU 1 · RÉSERVATION FLASH -->
+  <section class="niveau" aria-labelledby="n1">
+    <div class="niveau-tete">
+      <span class="niveau-num" aria-hidden="true">1</span>
+      <h2 id="n1">Réservation flash</h2>
+      <p>Trouver un créneau et réserver</p>
+    </div>
+    <div class="grid un">
+      <a class="card principale" href="flash.html">
+        <div class="card-top">
+          <span class="card-badge badge-meta">Réservation</span>
+          <h3><span class="card-icon" aria-hidden="true">📅</span>MÉTA-FLASH</h3>
+          <p>Salles partagées (1<sup>er</sup> et 7<sup>e</sup>) : grille des 31 prochains jours ouvrés pour les grandes salles (8 personnes et +). Cliquez sur un créneau libre pour réserver directement dans Outlook.</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">1er étage · 7e étage · 8p et + · 31 jours</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- NIVEAU 2 · DISPONIBILITÉS -->
+  <section class="niveau" aria-labelledby="n2">
+    <div class="niveau-tete">
+      <span class="niveau-num" aria-hidden="true">2</span>
+      <h2 id="n2">Disponibilités</h2>
+      <p>Ce qui est libre maintenant</p>
+    </div>
+    <div class="grid trois">
+      <a class="card" href="aldev-now.html">
+        <div class="card-top">
+          <span class="card-badge badge-aldev">Aldev</span>
+          <h3><span class="card-icon" aria-hidden="true">🏢</span>MÉTA-ALDEV</h3>
+          <p>Salles et bureaux Aldev : créneau en cours et créneau suivant, pour la journée.</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">Salles &amp; bureaux Aldev · aujourd'hui</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+      <a class="card" href="now.html">
+        <div class="card-top">
+          <span class="card-badge badge-meta">Métamorphose</span>
+          <h3><span class="card-icon" aria-hidden="true">⚡</span>MÉTA-NOW</h3>
+          <p>Salles partagées (1<sup>er</sup> et 7<sup>e</sup>) : les deux prochains créneaux occupés et la prochaine plage libre de 2 h.</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">1er étage · 7e étage</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+      <a class="card" href="today.html">
+        <div class="card-top">
+          <span class="card-badge badge-meta">Planning du jour</span>
+          <h3><span class="card-icon" aria-hidden="true">🕐</span>MÉTA-TODAY</h3>
+          <p>Salles partagées (1<sup>er</sup> et 7<sup>e</sup>) : statut en temps réel et frise de la journée. Cliquez sur une plage libre pour réserver.</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">1er étage · 7e étage · aujourd'hui</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- NIVEAU 3 · CONSULTATION SALLE PAR SALLE -->
+  <section class="niveau" aria-labelledby="n3">
+    <div class="niveau-tete">
+      <span class="niveau-num" aria-hidden="true">3</span>
+      <h2 id="n3">Consultation salle par salle</h2>
+      <p>Calendrier détaillé d'une salle</p>
+    </div>
+    <div class="grid un">
+      <a class="card" href="aldev-cal.html">
+        <div class="card-top">
+          <span class="card-badge badge-aldev">Toutes les salles</span>
+          <h3><span class="card-icon" aria-hidden="true">📆</span>MÉTA-TOUT</h3>
+          <p>Choisissez une salle du 1<sup>er</sup>, du 4<sup>e</sup> ou du 7<sup>e</sup> étage pour ouvrir son calendrier Outlook. Connexion Microsoft 365 requise.</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">1er · 4e · 7e étage · OWA</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Angers Loire Développement &nbsp;·&nbsp; Métamorphose, 14 rue Barra, Angers<br>
+  <a href="index.html">Page des visiteurs et partenaires</a>
+</footer>
+
+</body>
+</html>
