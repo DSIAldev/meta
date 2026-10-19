@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Réservation flash — Aldev</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#f4f2ee;--surface:#fff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-muted:#a09d98;--text-secondary:#6b6860;
+    --accent:#2d3546;
+    --aldev:#ec2e4a;                       /* salles Aldev (4e) */
+    --meta:#68B3E8;--meta-ink:#123a5a;     /* salles Métamorphose (1er/7e) */
+    --free:#2e7d5e;--free-bg:#eaf4ef;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .subtitle{font-size:12px;color:var(--text-muted);}
+  .legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);}
+  .legend-dot{width:10px;height:10px;border-radius:2px;}
+  .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .main{padding:16px 20px 40px;}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;max-height:calc(100vh - 100px);box-shadow:var(--shadow);}
+  table{width:100%;min-width:860px;border-collapse:collapse;table-layout:fixed;}
+  thead th{position:sticky;top:0;z-index:2;padding:8px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-left:1px solid var(--border);background:#f9f8f6;border-bottom:2px solid var(--border);}
+  thead th:first-child{border-left:none;text-align:left;padding-left:10px;width:90px;}
+  thead th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
+  thead th.b-aldev{border-top:3px solid var(--aldev);color:var(--aldev);}
+  thead th.b-meta{border-top:3px solid var(--meta);color:#2a7ab8;}
+  thead th.sep, td.sep{border-left:3px solid #b8b4ac;}
+  tbody tr{border-bottom:1px solid var(--border);}
+  tbody tr.slot-noon td{border-top:2px dashed #d4cfc8;}
+  tbody tr.day-first td{border-top:3px solid #b8b4ac;}
+  td{padding:0;vertical-align:middle;border-left:1px solid var(--border);height:36px;}
+  td:first-child{border-left:none;}
+  td.date-cell{padding:4px 8px;background:#fafaf8;}
+  td.date-cell .day-name{font-size:12px;font-weight:600;color:var(--text-primary);}
+  td.date-cell .day-date{font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace;}
+  td.slot-cell{padding:3px 4px;}
+  .slot-bar{height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;cursor:default;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 4px;}
+  .slot-bar.free{background:var(--free-bg);color:var(--free);cursor:pointer;}
+  .slot-bar.free:hover{background:#d0ece1;}
+  .slot-bar.busy-aldev{background:var(--aldev);color:#fff;}
+  .slot-bar.busy-meta{background:var(--meta);color:var(--meta-ink);}
+  .msg{padding:40px;text-align:center;color:var(--text-muted);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
+    <div class="subtitle">Salles de 8p et + · 31 jours ouvrés</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--free-bg);border:1px solid var(--free);"></div>Libre — cliquer pour réserver</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Occupée · salle Aldev (4e)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>Occupée · salle Métamorphose</div>
+  </div>
+  <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">Réservation flash</span>
+  <div class="update-time">Mis à jour : <span id="updated">—</span> · par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
+</header>
+
+<div class="main">
+  <div class="table-wrap">
+    <table>
+      <thead><tr id="thead"></tr></thead>
+      <tbody id="tbody"><tr><td colspan="11" class="msg">Chargement…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Ordre d'affichage : salles Aldev en tête, puis Métamorphose par capacité
+const SALLES = [
+  { nom:'Bull',       cap:'10p',  bat:'aldev', src:'aldev', email:'bull@angers-developpement.com' },
+  { nom:'Scania',     cap:'10p',  bat:'aldev', src:'aldev', email:'scania@angers-developpement.com' },
+  { nom:'Auditorium', cap:'200p', bat:'meta',  src:'meta',  email:'auditorium@la-fabrique-angers.fr' },
+  { nom:'Le Club',    cap:'20p',  bat:'meta',  src:'meta',  email:'leclub@la-fabrique-angers.fr' },
+  { nom:'Loire',      cap:'19p',  bat:'meta',  src:'meta',  email:'loire@la-fabrique-angers.fr' },
+  { nom:'Maine',      cap:'18p',  bat:'meta',  src:'meta',  email:'maine@la-fabrique-angers.fr' },
+  { nom:'Sarthe',     cap:'15p',  bat:'meta',  src:'meta',  email:'sarthe@la-fabrique-angers.fr' },
+  { nom:'Mayenne',    cap:'13p',  bat:'meta',  src:'meta',  email:'mayenne@la-fabrique-angers.fr' },
+  { nom:'Authion',    cap:'10p',  bat:'meta',  src:'meta',  email:'authion@la-fabrique-angers.fr' },
+  { nom:'Oudon',      cap:'8p',   bat:'meta',  src:'meta',  email:'oudon@la-fabrique-angers.fr' },
+];
+
+const SLOTS = [
+  { label:'08h–10h', from:8,  to:10 },
+  { label:'10h–12h', from:10, to:12 },
+  { label:'14h–16h', from:14, to:16 },
+  { label:'16h–18h', from:16, to:18 },
+];
+
+const ORGS = { 'angers-developpement.com':'Aldev', 'angerstechnopole.com':'Technopôle', 'maineetloire.cci.fr':'CCI' };
+const orgLabel = email => { const d = ((email||'').split('@')[1]||'').toLowerCase(); return ORGS[d] || d || '?'; };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function localMidnight(iso) { const [y,m,d] = iso.slice(0,10).split('-').map(Number); return new Date(y, m-1, d); }
+function spanOf(c) {
+  return c.isallday ? { s: localMidnight(c.start), e: localMidnight(c.end) }
+                    : { s: new Date(c.start),      e: new Date(c.end) };
+}
+// Événements qui chevauchent [day from:00, day to:00] — gère journées entières et multi-jours
+function slotEvents(creneaux, day, from, to) {
+  const s0 = new Date(day.getFullYear(), day.getMonth(), day.getDate(), from);
+  const s1 = new Date(day.getFullYear(), day.getMonth(), day.getDate(), to);
+  return (creneaux || []).filter(c => { const x = spanOf(c); return x.s < s1 && x.e > s0; });
+}
+
+function workdays(start, n) {
+  const days = []; const d = new Date(start); d.setHours(0,0,0,0);
+  while (days.length < n) { if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); d.setDate(d.getDate()+1); }
+  return days;
+}
+
+function reserver(i, y, m, d, from, to) {
+  const s = SALLES[i];
+  const start = new Date(y, m, d, from), end = new Date(y, m, d, to);
+  const p = new URLSearchParams({
+    path:'/calendar/action/compose', rru:'addevent',
+    startdt:start.toISOString(), enddt:end.toISOString(),
+    subject:`Réunion — ${s.nom}`, location:`${s.nom} — ${s.bat === 'aldev' ? 'Aldev 4e étage' : 'Métamorphose'}`, to:s.email,
+  });
+  window.open('https://outlook.office.com/calendar/deeplink/compose?' + p.toString(), '_blank');
+}
+
+function build(meta, aldev) {
+  // Date de mise à jour la plus ancienne des deux flux
+  document.getElementById('updated').textContent =
+    meta.updated === aldev.updated ? meta.updated : `${meta.updated || '—'} / ${aldev.updated || '—'}`;
+
+  const maps = { meta:{}, aldev:{} };
+  (meta.salles  || []).forEach(s => maps.meta[s.nom]  = s.créneaux || []);
+  (aldev.salles || []).forEach(s => maps.aldev[s.nom] = s.créneaux || []);
+
+  let th = '<th>Jour</th>';
+  SALLES.forEach((s, i) => {
+    const sep = i > 0 && SALLES[i-1].bat !== s.bat ? ' sep' : '';
+    th += `<th class="b-${s.bat}${sep}">${s.nom}<span class="cap">${s.cap}</span></th>`;
+  });
+  document.getElementById('thead').innerHTML = th;
+
+  const dayNames = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const monthNames = ['janv.','fév.','mars','avril','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+  const now = new Date();
+  let html = '';
+  workdays(now, 31).forEach(day => {
+    SLOTS.forEach((slot, si) => {
+      html += `<tr class="${si === 0 ? 'day-first' : ''}${si === 2 ? ' slot-noon' : ''}">`;
+      if (si === 0) {
+        html += `<td class="date-cell" rowspan="4"><div class="day-name">${dayNames[day.getDay()]} ${String(day.getDate()).padStart(2,'0')}</div><div class="day-date">${monthNames[day.getMonth()]}</div></td>`;
+      }
+      const slotEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), slot.to);
+      SALLES.forEach((s, i) => {
+        const sep = i > 0 && SALLES[i-1].bat !== s.bat ? ' sep' : '';
+        const evts = slotEvents(maps[s.src][s.nom], day, slot.from, slot.to);
+        let bar;
+        if (evts.length === 0) {
+          if (slotEnd <= now) {
+            bar = `<div class="slot-bar" style="color:var(--text-muted)">—</div>`;
+          } else {
+            bar = `<div class="slot-bar free" title="Réserver ${esc(s.nom)} — ${slot.label}" onclick="reserver(${i},${day.getFullYear()},${day.getMonth()},${day.getDate()},${slot.from},${slot.to})">+ ${slot.label}</div>`;
+          }
+        } else {
+          const tip = evts.map(e => `${(e.subject||'?').trim()} (${e.organizer||'?'})`).join(' / ');
+          bar = `<div class="slot-bar busy-${s.bat}" title="${esc(slot.label + ' — ' + tip)}">${esc(orgLabel(evts[0].organizer))}${evts.length > 1 ? ' +' + (evts.length - 1) : ''}</div>`;
+        }
+        html += `<td class="slot-cell${sep}">${bar}</td>`;
+      });
+      html += '</tr>';
+    });
+  });
+  document.getElementById('tbody').innerHTML = html;
+}
+
+const get = f => fetch(f + '?t=' + Date.now()).then(r => { if (!r.ok) throw new Error(f + ' introuvable'); return r.json(); });
+Promise.all([get('data.json'), get('data-aldev.json')])
+  .then(([meta, aldev]) => build(meta, aldev))
+  .catch(err => { document.getElementById('tbody').innerHTML = `<tr><td colspan="11" class="msg">${esc(err.message)}</td></tr>`; });
+</script>
+</body>
+</html>

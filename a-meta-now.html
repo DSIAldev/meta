@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Méta-Now — Aldev</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#f4f2ee;--surface:#ffffff;--border:#e2dfd8;
+    --text-primary:#1a1916;--text-secondary:#6b6860;--text-muted:#a09d98;
+    --accent:#2d3546;--busy:#c84b2f;--free:#2e7d5e;--free-light:#eaf4ef;
+    --aldev:#ec2e4a;--aldev-light:#fdeef1;
+    --technopole:#0f1f3d;--technopole-light:#e8eaf0;
+    --cci:#373cf5;--cci-light:#eeeffe;
+    --other:#4a6741;--other-light:#edf3ec;
+    --meta:#68B3E8;--meta-ink:#123a5a;--meta-light:#e3f1fb;
+    --radius:6px;--shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:13px;line-height:1.4;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .subtitle{font-size:12px;color:var(--text-muted);font-weight:400;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .update-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .legend{display:flex;gap:10px;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);}
+  .legend-dot{width:8px;height:8px;border-radius:50%;}
+  .main{padding:16px 24px 24px;}
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  table{width:100%;border-collapse:collapse;}
+  thead tr{background:#f9f8f6;border-bottom:2px solid var(--border);}
+  thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;}
+  thead th.ch{background:#f0f4f8;border-left:1px solid var(--border);color:var(--accent);}
+  thead th.lh{background:#f0f8f4;border-left:2px solid var(--border);color:var(--free);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:#fafaf8;}
+  tbody tr.fs td{background:#f9f8f6;padding:4px 12px;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+  td{padding:10px 12px;vertical-align:top;}
+  td.sc{font-weight:600;font-size:13px;color:var(--text-primary);white-space:nowrap;width:100px;}
+  td.cc{border-left:1px solid var(--border);width:200px;}
+  td.lc{border-left:2px solid var(--border);width:130px;}
+  .slot{display:flex;flex-direction:column;gap:3px;}
+  .slot-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);display:flex;align-items:center;gap:5px;}
+  .slot-time::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--busy);flex-shrink:0;}
+  .slot-title{font-size:12px;font-weight:500;color:var(--text-primary);line-height:1.3;}
+  .slot-org{display:inline-block;font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;margin-top:2px;}
+  .org-aldev{background:var(--aldev-light);color:var(--aldev);}
+  .org-technopole{background:var(--technopole-light);color:var(--technopole);}
+  .org-cci{background:var(--cci-light);color:var(--cci);}
+  .org-other{background:var(--other-light);color:var(--other);}
+  tr.b-aldev td.sc{border-left:4px solid var(--aldev);}
+  tr.b-meta td.sc{border-left:4px solid var(--meta);}
+  tr.b-aldev .slot-time::before{background:var(--aldev);}
+  tr.b-meta .slot-time::before{background:var(--meta);}
+  tr.b-aldev .slot-org{background:var(--aldev-light);color:var(--aldev);}
+  tr.b-meta .slot-org{background:var(--meta-light);color:#1f6fa8;}
+  tbody tr.fs.f-aldev td{color:var(--aldev);}
+  tbody tr.fs.f-meta td{color:#2a7ab8;}
+  .slot-empty{font-size:11px;color:var(--text-muted);font-style:italic;}
+  .free-slot{display:flex;flex-direction:column;gap:2px;}
+  .free-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--free);font-weight:500;}
+  .free-time{font-size:11px;color:var(--text-secondary);}
+  .free-now{font-size:11px;font-weight:600;color:var(--free);background:var(--free-light);padding:2px 7px;border-radius:3px;display:inline-block;}
+  .error-msg{padding:40px;text-align:center;color:var(--text-muted);font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:36px;display:block;">
+    <div class="subtitle">2 prochains créneaux</div>
+  </div>
+  <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">MÉTA-NOW</span>
+  <div class="header-right">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Salle Aldev (4e)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>Salle Métamorphose</div>
+    </div>
+    <div class="update-time">Mis à jour : <span id="updated">—</span> &nbsp;·&nbsp; par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
+  </div>
+</header>
+<div class="main">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Salle</th>
+          <th class="ch">Créneau 1</th>
+          <th class="ch">Créneau 2</th>
+          <th class="lh">Prochain libre</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="4" class="error-msg">Chargement…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+const ORGS = {
+  'angers-developpement.com': { label: 'Aldev', css: 'org-aldev' },
+  'angerstechnopole.com':     { label: 'Technopôle', css: 'org-technopole' },
+  'maineetloire.cci.fr':      { label: 'CCI', css: 'org-cci' }
+};
+
+function getOrg(email) {
+  if (!email) return { label: '—', css: 'org-other' };
+  const domain = (email.split('@')[1] || '').toLowerCase();
+  return ORGS[domain] || { label: domain, css: 'org-other' };
+}
+
+// Bornes réelles d'un événement. Les "journée entière" arrivent en minuit UTC :
+// on prend la date (YYYY-MM-DD) et on la place à minuit local.
+function localMidnight(iso) {
+  const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+function spanOf(c) {
+  return c.isallday ? { s: localMidnight(c.start), e: localMidnight(c.end) }
+                    : { s: new Date(c.start),      e: new Date(c.end) };
+}
+
+function minsOf(d) { return d.getHours() * 60 + d.getMinutes(); }
+
+function slotHTML(slot) {
+  if (!slot) return '<div class="slot-empty">Libre</div>';
+  const { s, e } = spanOf(slot);
+  const day = s.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
+  let hours;
+  if (slot.isallday) {
+    const last = new Date(e); last.setDate(last.getDate() - 1);
+    hours = last.toDateString() === s.toDateString()
+      ? 'Journée'
+      : 'au ' + last.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
+  } else {
+    const h = d => d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    hours = `${h(s)}–${h(e)}`;
+  }
+  const org = getOrg(slot.organizer);
+  return `<div class="slot">
+    <div class="slot-time"><span>${day}</span><span>${hours}</span></div>
+    <div class="slot-title">${slot.subject || '—'}</div>
+    <span class="slot-org ${org.css}">${org.label}</span>
+  </div>`;
+}
+
+function nextFreeSlot(allCreneaux, now) {
+  // Plages horaires candidates (minutes depuis minuit)
+  const WINDOWS = [
+    { start: 9*60,  end: 12*60 },  // 09:00–12:00
+    { start: 14*60, end: 18*60 }   // 14:00–18:00
+  ];
+  const MIN_DURATION = 2 * 60; // 2h
+
+  // Créneaux qui touchent le jour donné, bornés à ce jour (minutes 0–1440).
+  // Gère journées entières, événements sur plusieurs jours et changement d'heure.
+  function busyMins(day, creneaux) {
+    const d0 = new Date(day); d0.setHours(0, 0, 0, 0);
+    const d1 = new Date(d0);  d1.setDate(d1.getDate() + 1);
+    return creneaux
+      .map(spanOf)
+      .filter(x => x.s < d1 && x.e > d0)
+      .map(x => ({ s: x.s <= d0 ? 0 : minsOf(x.s), e: x.e >= d1 ? 1440 : minsOf(x.e) }))
+      .sort((a, b) => a.s - b.s);
+  }
+
+  // Première sous-plage libre ≥ MIN_DURATION dans [winStart, winEnd]
+  function firstFreeIn(winStart, winEnd, busy) {
+    let cursor = winStart;
+    for (const blk of busy) {
+      if (blk.s >= winEnd) break;
+      if (blk.e <= cursor) continue;
+      const freeEnd = Math.min(blk.s, winEnd);
+      if (freeEnd - cursor >= MIN_DURATION) return { s: cursor, e: freeEnd };
+      cursor = Math.max(cursor, blk.e);
+    }
+    if (winEnd - cursor >= MIN_DURATION) return { s: cursor, e: winEnd };
+    return null;
+  }
+
+  const nowMins = minsOf(now);
+  let day = new Date(now);
+  day.setHours(0, 0, 0, 0);
+  while (day.getDay() === 0 || day.getDay() === 6) day.setDate(day.getDate() + 1);
+
+  // Recherche sur 60 jours ouvrés max, en démarrant aujourd'hui
+  for (let i = 0; i < 60; i++) {
+    const isToday = day.toDateString() === now.toDateString();
+    const busy = busyMins(day, allCreneaux);
+
+    for (const win of WINDOWS) {
+      const effectiveWinStart = isToday ? Math.max(win.start, nowMins) : win.start;
+      if (win.end - effectiveWinStart < MIN_DURATION) continue;
+
+      const free = firstFreeIn(effectiveWinStart, win.end, busy);
+      if (free) {
+        const label = isToday
+          ? "Aujourd'hui"
+          : day.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
+        const fmt = m => String(Math.floor(m / 60)).padStart(2,'0') + ':' + String(m % 60).padStart(2,'0');
+        return `<div class="free-slot"><div class="free-label">${label}</div><div class="free-time">${fmt(free.s)}–${fmt(free.e)}</div></div>`;
+      }
+    }
+    day.setDate(day.getDate() + 1);
+    while (day.getDay() === 0 || day.getDay() === 6) day.setDate(day.getDate() + 1);
+  }
+  return '<div class="free-now">Aucun créneau libre trouvé</div>';
+}
+
+function buildTable(data) {
+  document.getElementById('updated').textContent = data.updated || '—';
+  const tbody = document.getElementById('tbody');
+
+  // Référence unique pour toutes les colonnes : l'heure réelle
+  const now = new Date();
+
+  let html = '';
+  let lastEtage = null;
+  for (const salle of data.salles) {
+    if (salle.etage !== lastEtage) {
+      html += `<tr class="fs f-${salle.bat}"><td colspan="4">${salle.etage}</td></tr>`;
+      lastEtage = salle.etage;
+    }
+    const creneaux = salle.créneaux || [];
+    const futurs = creneaux
+      .filter(c => spanOf(c).e > now)
+      .sort((a, b) => spanOf(a).s - spanOf(b).s);
+    html += `<tr class="b-${salle.bat}">
+      <td class="sc">${salle.nom}</td>
+      <td class="cc">${slotHTML(futurs[0])}</td>
+      <td class="cc">${slotHTML(futurs[1])}</td>
+      <td class="lc">${nextFreeSlot(creneaux, now)}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+// Bull et Scania (data-aldev.json) en tête, puis les salles Métamorphose (data.json)
+const SALLES_ALDEV = ['Bull', 'Scania'];
+const get = f => fetch(f + '?t=' + Date.now()).then(r => { if (!r.ok) throw new Error(f + ' introuvable'); return r.json(); });
+Promise.all([get('data.json'), get('data-aldev.json')])
+  .then(([meta, aldev]) => {
+    const a = SALLES_ALDEV
+      .map(n => (aldev.salles || []).find(s => s.nom === n) || { nom: n, créneaux: [] })
+      .map(s => ({ ...s, etage: '4e étage · Aldev', bat: 'aldev' }));
+    const m = (meta.salles || []).map(s => ({ ...s, bat: 'meta' }));
+    buildTable({ updated: meta.updated, salles: [...a, ...m] });
+  })
+  .catch(err => {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="4" class="error-msg">${err.message}</td></tr>`;
+  });
+</script>
+</body>
+</html>
