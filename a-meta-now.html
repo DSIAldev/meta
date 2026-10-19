@@ -50,19 +50,15 @@
   .slot-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-secondary);display:flex;align-items:center;gap:5px;}
   .slot-time::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--busy);flex-shrink:0;}
   .slot-title{font-size:12px;font-weight:500;color:var(--text-primary);line-height:1.3;}
-  .slot-org{display:inline-block;font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;margin-top:2px;}
+  .slot-org{align-self:flex-start;display:inline-block;font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;margin-top:2px;}
   .org-aldev{background:var(--aldev-light);color:var(--aldev);}
   .org-technopole{background:var(--technopole-light);color:var(--technopole);}
   .org-cci{background:var(--cci-light);color:var(--cci);}
   .org-other{background:var(--other-light);color:var(--other);}
   tr.b-aldev td.sc{border-left:4px solid var(--aldev);}
   tr.b-meta td.sc{border-left:4px solid var(--meta);}
-  tr.b-aldev .slot-time::before{background:var(--aldev);}
-  tr.b-meta .slot-time::before{background:var(--meta);}
-  tr.b-aldev .slot-org{background:var(--aldev-light);color:var(--aldev);}
-  tr.b-meta .slot-org{background:var(--meta-light);color:#1f6fa8;}
-  tbody tr.fs.f-aldev td{color:var(--aldev);}
-  tbody tr.fs.f-meta td{color:#2a7ab8;}
+  tbody tr.fs.f-aldev td{background:var(--aldev);color:#fff;}
+  tbody tr.fs.f-meta td{background:var(--meta);color:var(--meta-ink);}
   .slot-empty{font-size:11px;color:var(--text-muted);font-style:italic;}
   .free-slot{display:flex;flex-direction:column;gap:2px;}
   .free-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--free);font-weight:500;}
@@ -80,8 +76,13 @@
   <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">MÉTA-NOW</span>
   <div class="header-right">
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Salle Aldev (4e)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>Salle Métamorphose</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--technopole)"></div>Technopôle</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
+      <div class="legend-item" style="margin-left:6px;color:var(--text-muted)">Bandeau :</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>salle Aldev</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>salle Métamorphose</div>
     </div>
     <div class="update-time">Mis à jour : <span id="updated">—</span> &nbsp;·&nbsp; par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
   </div>

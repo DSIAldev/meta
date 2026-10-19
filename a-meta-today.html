@@ -74,10 +74,12 @@
   .gap:hover{background:#d0ece1;opacity:1;}
   .gap:hover span{opacity:1;}
   .blk{position:absolute;top:3px;bottom:3px;border-radius:3px;color:#fff;font-size:10px;font-weight:500;padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:flex;align-items:center;}
-  .blk.b-aldev{background:var(--aldev);color:#fff;}
-  .blk.b-meta{background:var(--meta);color:var(--meta-ink);}
-  .floor.f-aldev{color:var(--aldev);border-left:3px solid var(--aldev);}
-  .floor.f-meta{color:#2a7ab8;border-left:3px solid var(--meta);}
+  .blk.org-aldev{background:var(--aldev);}
+  .blk.org-technopole{background:var(--technopole);}
+  .blk.org-cci{background:var(--cci);}
+  .blk.org-other{background:var(--other);}
+  .floor.f-aldev{background:var(--aldev);color:#fff;}
+  .floor.f-meta{background:var(--meta);color:var(--meta-ink);}
   .nowline{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--aldev);border-radius:1px;pointer-events:none;}
   .nowline::before{content:'';position:absolute;top:-3px;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--aldev);}
 
@@ -113,8 +115,13 @@
   <div class="header-right">
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:var(--free-bg);border:1px solid var(--free);"></div>Libre — cliquer pour réserver</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Salle Aldev (4e)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>Salle Métamorphose</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--technopole)"></div>Technopôle</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
+      <div class="legend-item" style="margin-left:6px;color:var(--text-muted)">Bandeau :</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>salle Aldev</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>salle Métamorphose</div>
     </div>
     <div class="update-time">Mis à jour : <span id="updated">—</span> · par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
   </div>
@@ -245,7 +252,7 @@ function timelineHTML(evts, isToday, nowM, roomIdx, bat) {
     if (e <= s) continue;
     const org = getOrg(ev.c.organizer);
     const tip = `${ev.c.isallday ? 'Journée' : hm(ev.s)+'–'+hm(ev.e)} · ${ev.c.subject || '—'} (${ev.c.organizer || '?'})`;
-    h += `<div class="blk b-${bat}" style="left:${pct(s)};width:${pct(H0 + e - s)}" title="${esc(tip)}">${esc(org.label)}</div>`;
+    h += `<div class="blk ${org.css}" style="left:${pct(s)};width:${pct(H0 + e - s)}" title="${esc(tip)}">${esc(org.label)}</div>`;
   }
   if (isToday && nowM >= H0 && nowM <= H1) h += `<div class="nowline" style="left:${pct(nowM)}"></div>`;
   return h + '</div>';
