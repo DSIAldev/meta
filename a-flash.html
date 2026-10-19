@@ -14,7 +14,9 @@
     --text-primary:#1a1916;--text-muted:#a09d98;--text-secondary:#6b6860;
     --accent:#2d3546;
     --aldev:#ec2e4a;                       /* salles Aldev (4e) */
-    --meta:#68B3E8;--meta-ink:#123a5a;     /* salles Métamorphose (1er/7e) */
+    --meta:#68B3E8;--meta-ink:#123a5a;     /* en-têtes salles Métamorphose (1er/7e) */
+    --technopole:#0f1f3d;--cci:#373cf5;--other:#4a6741;
+    --month-tint:#f3efe6;
     --free:#2e7d5e;--free-bg:#eaf4ef;
     --radius:6px;--shadow:0 1px 3px rgba(0,0,0,.06);
   }
@@ -33,8 +35,10 @@
   thead th{position:sticky;top:0;z-index:2;padding:8px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-left:1px solid var(--border);background:#f9f8f6;border-bottom:2px solid var(--border);}
   thead th:first-child{border-left:none;text-align:left;padding-left:10px;width:90px;}
   thead th .cap{font-size:9px;font-weight:400;color:var(--text-muted);display:block;margin-top:1px;}
-  thead th.b-aldev{border-top:3px solid var(--aldev);color:var(--aldev);}
-  thead th.b-meta{border-top:3px solid var(--meta);color:#2a7ab8;}
+  thead th.b-aldev{background:var(--aldev);color:#fff;}
+  thead th.b-aldev .cap{color:rgba(255,255,255,.8);}
+  thead th.b-meta{background:var(--meta);color:var(--meta-ink);}
+  thead th.b-meta .cap{color:var(--meta-ink);opacity:.75;}
   thead th.sep, td.sep{border-left:3px solid #b8b4ac;}
   tbody tr{border-bottom:1px solid var(--border);}
   tbody tr.slot-noon td{border-top:2px dashed #d4cfc8;}
@@ -48,8 +52,14 @@
   .slot-bar{height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;cursor:default;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 4px;}
   .slot-bar.free{background:var(--free-bg);color:var(--free);cursor:pointer;}
   .slot-bar.free:hover{background:#d0ece1;}
-  .slot-bar.busy-aldev{background:var(--aldev);color:#fff;}
-  .slot-bar.busy-meta{background:var(--meta);color:var(--meta-ink);}
+  .slot-bar.org-aldev{background:var(--aldev);color:#fff;}
+  .slot-bar.org-technopole{background:var(--technopole);color:#fff;}
+  .slot-bar.org-cci{background:var(--cci);color:#fff;}
+  .slot-bar.org-other{background:var(--other);color:#fff;}
+  tr.m-even td{background:var(--month-tint);}
+  tr.m-even td.date-cell{background:#ebe5d8;}
+  tr.month-band td{background:var(--accent);color:#fff;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;height:auto;border-left:none;}
+  tr.month-band td span{font-weight:400;opacity:.7;margin-left:8px;text-transform:none;letter-spacing:0;}
   .msg{padding:40px;text-align:center;color:var(--text-muted);}
 </style>
 </head>
@@ -57,12 +67,17 @@
 <header>
   <div class="header-left">
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
-    <div class="subtitle">Salles de 8p et + · 31 jours ouvrés</div>
+    <div class="subtitle">Salles de 8p et + · <span id="horizon">jours ouvrés</span></div>
   </div>
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--free-bg);border:1px solid var(--free);"></div>Libre — cliquer pour réserver</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Occupée · salle Aldev (4e)</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>Occupée · salle Métamorphose</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>Aldev</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--technopole)"></div>Technopôle</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cci)"></div>CCI</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--other)"></div>Autre</div>
+    <div class="legend-item" style="margin-left:6px;color:var(--text-muted)">En-tête :</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--aldev)"></div>salle Aldev</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--meta)"></div>salle Métamorphose</div>
   </div>
   <span style="background:var(--aldev);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;">Réservation flash</span>
   <div class="update-time">Mis à jour : <span id="updated">—</span> · par <span style="color:var(--aldev);font-weight:600">Aldev-SI</span></div>
@@ -99,8 +114,12 @@ const SLOTS = [
   { label:'16h–18h', from:16, to:18 },
 ];
 
-const ORGS = { 'angers-developpement.com':'Aldev', 'angerstechnopole.com':'Technopôle', 'maineetloire.cci.fr':'CCI' };
-const orgLabel = email => { const d = ((email||'').split('@')[1]||'').toLowerCase(); return ORGS[d] || d || '?'; };
+const ORGS = {
+  'angers-developpement.com': { label:'Aldev',      css:'org-aldev' },
+  'angerstechnopole.com':     { label:'Technopôle', css:'org-technopole' },
+  'maineetloire.cci.fr':      { label:'CCI',        css:'org-cci' },
+};
+const getOrg = email => { const d = ((email||'').split('@')[1]||'').toLowerCase(); return ORGS[d] || { label: d || '?', css:'org-other' }; };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 function localMidnight(iso) { const [y,m,d] = iso.slice(0,10).split('-').map(Number); return new Date(y, m-1, d); }
@@ -115,11 +134,19 @@ function slotEvents(creneaux, day, from, to) {
   return (creneaux || []).filter(c => { const x = spanOf(c); return x.s < s1 && x.e > s0; });
 }
 
-function workdays(start, n) {
+// Jours ouvrés d'aujourd'hui jusqu'à la date de fin (incluse), au moins `min`
+function workdays(start, until, min) {
   const days = []; const d = new Date(start); d.setHours(0,0,0,0);
-  while (days.length < n) { if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); d.setDate(d.getDate()+1); }
+  while (d <= until || days.length < min) { if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); d.setDate(d.getDate()+1); }
   return days;
 }
+// Horizon = fin du dernier créneau connu dans les flux (la fenêtre Power Automate)
+function horizonOf(...feeds) {
+  let max = 0;
+  feeds.forEach(f => (f.salles || []).forEach(s => (s.créneaux || []).forEach(c => { const t = spanOf(c).e.getTime(); if (t > max) max = t; })));
+  const h = new Date(max || Date.now()); h.setHours(0,0,0,0); return h;
+}
+const MIN_DAYS = 31, MAX_DAYS = 130;
 
 function reserver(i, y, m, d, from, to) {
   const s = SALLES[i];
@@ -152,9 +179,21 @@ function build(meta, aldev) {
   const monthNames = ['janv.','fév.','mars','avril','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
   const now = new Date();
   let html = '';
-  workdays(now, 31).forEach(day => {
+  const days = workdays(now, horizonOf(meta, aldev), MIN_DAYS).slice(0, MAX_DAYS);
+  const last = days[days.length - 1];
+  document.getElementById('horizon').textContent =
+    `${days.length} jours ouvrés · jusqu'au ${last.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'long' })}`;
+  let curMonth = -1;
+  days.forEach(day => {
+    if (day.getMonth() !== curMonth) {
+      curMonth = day.getMonth();
+      const label = day.toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+      const nb = days.filter(d => d.getMonth() === curMonth && d.getFullYear() === day.getFullYear()).length;
+      html += `<tr class="month-band"><td colspan="${SALLES.length + 1}">${label}<span>${nb} jour${nb > 1 ? 's' : ''} ouvré${nb > 1 ? 's' : ''}</span></td></tr>`;
+    }
+    const mEven = (day.getMonth() + 1) % 2 === 0 ? ' m-even' : '';
     SLOTS.forEach((slot, si) => {
-      html += `<tr class="${si === 0 ? 'day-first' : ''}${si === 2 ? ' slot-noon' : ''}">`;
+      html += `<tr class="${si === 0 ? 'day-first' : ''}${si === 2 ? ' slot-noon' : ''}${mEven}">`;
       if (si === 0) {
         html += `<td class="date-cell" rowspan="4"><div class="day-name">${dayNames[day.getDay()]} ${String(day.getDate()).padStart(2,'0')}</div><div class="day-date">${monthNames[day.getMonth()]}</div></td>`;
       }
@@ -171,7 +210,8 @@ function build(meta, aldev) {
           }
         } else {
           const tip = evts.map(e => `${(e.subject||'?').trim()} (${e.organizer||'?'})`).join(' / ');
-          bar = `<div class="slot-bar busy-${s.bat}" title="${esc(slot.label + ' — ' + tip)}">${esc(orgLabel(evts[0].organizer))}${evts.length > 1 ? ' +' + (evts.length - 1) : ''}</div>`;
+          const org = getOrg(evts[0].organizer);
+          bar = `<div class="slot-bar ${org.css}" title="${esc(slot.label + ' — ' + tip)}">${esc(org.label)}${evts.length > 1 ? ' +' + (evts.length - 1) : ''}</div>`;
         }
         html += `<td class="slot-cell${sep}">${bar}</td>`;
       });

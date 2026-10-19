@@ -64,13 +64,17 @@
   .slot-bar.org-technopole{background:var(--technopole);color:#fff;}
   .slot-bar.org-cci{background:var(--cci);color:#fff;}
   .slot-bar.org-other{background:var(--other);color:#fff;}
+  tr.m-even td{background:#f3efe6;}
+  tr.m-even td.date-cell{background:#ebe5d8;}
+  tr.month-band td{background:var(--accent);color:#fff;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;height:auto;border-left:none;}
+  tr.month-band td span{font-weight:400;opacity:.7;margin-left:8px;text-transform:none;letter-spacing:0;}
 </style>
 </head>
 <body>
 <header>
   <div class="header-left">
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
-    <div class="subtitle">Réservation salles de 8p et + · 31 jours</div>
+    <div class="subtitle">Réservation salles de 8p et + · <span id="horizon">jours ouvrés</span></div>
   </div>
   <div style="display:flex;gap:20px;align-items:center;">
     <div class="legend">
@@ -141,15 +145,23 @@ function orgClass(email) {
   return ORGS[d] || 'org-other';
 }
 
-function workdays(start, n) {
-  const days = []; let d = new Date(start);
-  while (days.length < n) {
+// Jours ouvrés d'aujourd'hui jusqu'à la date de fin (incluse), au moins `min`
+function workdays(start, until, min) {
+  const days = []; const d = new Date(start); d.setHours(0,0,0,0);
+  while (d <= until || days.length < min) {
     const dow = d.getDay();
     if (dow !== 0 && dow !== 6) days.push(new Date(d));
     d.setDate(d.getDate()+1);
   }
   return days;
 }
+// Horizon = fin du dernier créneau connu dans data.json (la fenêtre Power Automate)
+function horizonOf(data) {
+  let max = 0;
+  (data.salles || []).forEach(s => (s.créneaux || []).forEach(c => { const t = new Date(c.end).getTime(); if (t > max) max = t; }));
+  const h = new Date(max || Date.now()); h.setHours(0,0,0,0); return h;
+}
+const MIN_DAYS = 31, MAX_DAYS = 130;
 
 function localDateStr(d) {
   // Retourne YYYY-MM-DD en heure locale (pas UTC)
@@ -205,15 +217,26 @@ function buildTable(data) {
   const sallesMap = {};
   (data.salles||[]).forEach(s => sallesMap[s.nom] = s.créneaux||[]);
 
-  const days = workdays(new Date(), 31);
+  const days = workdays(new Date(), horizonOf(data), MIN_DAYS).slice(0, MAX_DAYS);
+  const lastDay = days[days.length - 1];
+  document.getElementById('horizon').textContent =
+    `${days.length} jours ouvrés · jusqu'au ${lastDay.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'long' })}`;
+  let curMonth = -1;
   const dayNames  = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
   const monthNames = ['janv.','fév.','mars','avril','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 
   let html = '';
   days.forEach((day, di) => {
+    if (day.getMonth() !== curMonth) {
+      curMonth = day.getMonth();
+      const label = day.toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+      const nb = days.filter(d => d.getMonth() === curMonth && d.getFullYear() === day.getFullYear()).length;
+      html += `<tr class="month-band"><td colspan="${SALLES.length + 1}">${label}<span>${nb} jour${nb > 1 ? 's' : ''} ouvré${nb > 1 ? 's' : ''}</span></td></tr>`;
+    }
+    const mEven = (day.getMonth() + 1) % 2 === 0 ? ' m-even' : '';
     SLOTS.forEach((slot, si) => {
       const isFirst = si === 0;
-      html += `<tr class="${isFirst ? 'day-first' : ''}${si===2?' slot-noon':''}">`;
+      html += `<tr class="${isFirst ? 'day-first' : ''}${si===2?' slot-noon':''}${mEven}">`;
 
       if (isFirst) {
         const dn = dayNames[day.getDay()];
