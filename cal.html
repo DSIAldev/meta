@@ -54,11 +54,16 @@
   .btn-reserve{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:opacity .15s;}
   .btn-reserve:hover{opacity:.85;}
   footer{text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);background:var(--surface);margin-top:20px;}
+  .home-btn{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 11px;border:1.5px solid #e2dfd8;border-radius:6px;background:#fff;color:#2d3546;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:border-color .15s,background .15s;}
+  .home-btn:hover{border-color:#2d3546;background:#f4f2ee;}
+  .home-btn span{font-size:14px;line-height:1;}
+  @media(max-width:600px){.home-btn b{display:none;}}
 </style>
 </head>
 <body>
 <header>
   <div class="header-left">
+    <a class="home-btn" href="index.html" title="Retour à l'accueil"><span>←</span><b>Accueil</b></a>
     <img src="https://raw.githubusercontent.com/DSIAldev/meta/main/11-meta.jpg" alt="Métamorphose" style="height:34px;display:block;">
     <div><div class="header-title">CALENDRIERS</div><div class="header-sub">par Aldev-SI</div></div>
   </div>
